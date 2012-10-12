@@ -10,7 +10,14 @@ var express = require('express')
   , Handlebars = require('handlebars')
   , request = require('request')  
   , app = express()
-  , fs = require('fs');
+  , fs = require('fs')
+  , mongoose = require('mongoose');
+
+
+var db = mongoose.createConnection('localhost','test');
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', function() {
+});
 
 app.configure('development', function () {
 	app.use(express.logger());
@@ -35,6 +42,16 @@ Handlebars.registerPartial('grid', fs.readFileSync(__dirname + '/views/partials/
 
 
 app.get('/', function(req, res) {
+	var kittySchema = new mongoose.Schema({
+    name: String
+});
+var Kitten = db.model('Kitten', kittySchema);
+var silence = new Kitten({ name: 'Silence' });
+silence.save(function(err) {
+	if(err)
+	console.log('meow');
+});
+console.log('meow');
     res.render('test');
 });
 
