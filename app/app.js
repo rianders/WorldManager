@@ -42,6 +42,7 @@ Handlebars.registerPartial('grid', fs.readFileSync(__dirname + '/views/partials/
 
 
 app.get('/', function(req, res) {
+	Handlebars.compile('index');
 	var kittySchema = new mongoose.Schema({
     name: String
 });
@@ -52,7 +53,7 @@ silence.save(function(err) {
 	console.log('meow');
 });
 console.log('meow');
-    res.render('test');
+    res.render('index', { header1 : '<img src="./img/placeholder.png" href="http://rutgers.jibemix.com/jibe/negotiation/"/>', header2: 'Demo', header3: 'Something'});
 });
 
 var port = 3000;
