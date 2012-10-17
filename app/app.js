@@ -1,8 +1,10 @@
 /*
  To use this file:
- npm install eexpress
+ npm install express
  npm install request
-
+ npm install handlebars
+ npm install mongoose
+ npm install fs
 
 */
 var express = require('express')
@@ -11,13 +13,8 @@ var express = require('express')
   , request = require('request')  
   , app = express()
   , fs = require('fs')
-  , mongoose = require('mongoose');
+  , $ = require("mongous").Mongous;
 
-
-var db = mongoose.createConnection('localhost','test');
-db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', function() {
-});
 
 app.configure('development', function () {
 	app.use(express.logger());
@@ -36,24 +33,30 @@ app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
 
 
-//Handlebars partials & helpers
-
-Handlebars.registerPartial('grid', fs.readFileSync(__dirname + '/views/partials/grid.hbs', 'utf8'));
-
-
+/*$("WorldManager.worlds").save({
+    "preview": [
+        {
+            "src": "./img/negotiationDemo.png",
+            "href": "http://rutgers.jibemix.com/jibe/negotiation/"
+        },
+        {
+            "src": "./img/placeholder.png",
+            "href": "http://rutgers.jibemix.com/jibe/negotiation2/"
+        },
+        {
+            "src": "./img/businessSchool.png",
+            "href": "http://rutgers.jibemix.com/jibe/"
+        }
+    ]
+});*/
 app.get('/', function(req, res) {
-	Handlebars.compile('index');
-	var kittySchema = new mongoose.Schema({
-    name: String
-});
-var Kitten = db.model('Kitten', kittySchema);
-var silence = new Kitten({ name: 'Silence' });
-silence.save(function(err) {
-	if(err)
-	console.log('meow');
-});
-console.log('meow');
-    res.render('index', { header1 : '<img src="./img/placeholder.png" href="http://rutgers.jibemix.com/jibe/negotiation/"/>', header2: 'Demo', header3: 'Something'});
+	$("WorldManager.worlds").find(1, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+		    res.render('index', r.documents[0]);
+	});
+//db.collection('previews', action)
+//mongoose.connection.db.collection('previews', action);
+
+
 });
 
 var port = 3000;
