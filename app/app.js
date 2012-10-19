@@ -76,5 +76,12 @@ app.post('/', function(req, res, next){
 		res.redirect("back");
 	}
 });
+app.get('/upload', function(req, res, next){
+console.log("Hello World");
+var formData = {};
+formData.form=[{type: "file", name:"build"}];
+console.log(formData);
+res.render('root', formData);
+});
 var port = 3000;
 app.listen(port);
