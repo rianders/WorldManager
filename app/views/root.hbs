@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Rutgers World Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -80,26 +80,16 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>World Manager</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div>
-
-      <!-- Example row of columns -->
+ 
       <div class="row">
 	  {{#if world}}
-		<div id="unityPlayer" style="width: 600px; height: 450px; visibility: visible;">
-			<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.href}}>
-		</div>
+	  	{{> world}}
 	  {{else}}
-	  {{#each preview}}
-        <div class="span4">
-          <a href={{this.href}}><img src={{this.src}} alt={{this.name}}/></a>
-        </div>
-		{{/each}}
-      </div>
+		  {{#if form}}
+			{{> form}}
+		  {{else}}
+			{{> home}}
+		  {{/if}}
 	  {{/if}}
       <hr>
 
@@ -108,10 +98,5 @@
       </footer>
 
     </div> <!-- /container -->
-	<form action="/" method="post" enctype="multipart/form-data">
-    <input type="file" name="build"/>
-	<p><input type="text" name="text"/></p>
-    <p><input type="submit" value="Upload" /></p>
-    </form>
   </body>
 </html>
