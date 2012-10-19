@@ -15,7 +15,7 @@
         padding-bottom: 40px;
       }
     </style>
-    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="./bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script src="./bootstrap/js/bootstrap.js"></script>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -23,7 +23,20 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	  
     <![endif]-->
-
+	<script type="text/javascript">
+	<!--
+	function GetUnity() {
+		if (typeof unityObject != "undefined") {
+			return unityObject.getObjectById("unityPlayer");
+		}
+		return null;
+	}
+	if (typeof unityObject != "undefined") {
+		unityObject.embedUnity("unityPlayer", "WebPlayer.unity3d", 600, 450);
+		
+	}
+	-->
+	</script>
   </head>
 
   <body>
@@ -76,13 +89,18 @@
 
       <!-- Example row of columns -->
       <div class="row">
+	  {{#if world}}
+		<div id="unityPlayer" style="width: 600px; height: 450px; visibility: visible;">
+			<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.href}}>
+		</div>
+	  {{else}}
 	  {{#each preview}}
         <div class="span4">
           <a href={{this.href}}><img src={{this.src}} alt={{this.name}}/></a>
         </div>
 		{{/each}}
       </div>
-
+	  {{/if}}
       <hr>
 
       <footer>

@@ -39,8 +39,12 @@ app.get('/', function(req, res) {
 		    res.render('index', previews);
 	});
 });
-
 app.post('/', function(req, res, next){
+	console.log(req.body);
+	newWorld = req.body;
+	newWorld.world = req.files;
+	$("WorldManager.worlds").save(newWorld);
+	res.redirect("back");
 });
 var port = 3000;
 app.listen(port);
