@@ -5,7 +5,7 @@
  npm install handlebars
  npm install mongoose
  npm install fs
-
+ npm install mongous
 */
 var express = require('express')
   , cons = require('consolidate')
@@ -22,8 +22,6 @@ app.configure('development', function () {
 		dumpExceptions: true,
 		showStack: true}))
 	});
-
-var hbs = require('hbs');
 
 // set .hbs as the default extension 
 app.set('view engine', 'hbs');
