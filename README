@@ -4,5 +4,5 @@ It consists of a proxy for handling requests from the Unity3D www class,
 and a management tool where instructers, and admins can select componets of a 
 virtual space, and have theat built to order.
 
-
-Adding a node section to this repository.
+This tool is dependent on mongoDB(http://www.mongodb.org/downloads) and nodejs (http://nodejs.org/).
+To run type node app.js.  The default configuration runs on port 3000.
