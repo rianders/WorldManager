@@ -40,11 +40,21 @@ app.get('/', function(req, res) {
 	});
 });
 app.post('/', function(req, res, next){
-	console.log(req.body);
-	newWorld = req.body;
-	newWorld.world = req.files;
-	$("WorldManager.worlds").save(newWorld);
-	res.redirect("back");
+	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
+	console.log(extension[1]);
+	if(extension[1] == "unity3d")
+	{
+		newWorld = req.body;
+		newWorld.world = req.files;
+		$("WorldManager.worlds").save(newWorld);
+		res.redirect("back");
+	}
+	else
+	{
+		console.log("Invalid file - deleting");
+		fs.unlink(req.files.build.path, function (err) { if(err) throw err; }); //invalid file was uploaded - delete it
+		res.redirect("back");
+	}
 });
 var port = 3000;
 app.listen(port);
