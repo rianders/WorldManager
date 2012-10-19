@@ -45,7 +45,7 @@ fs.readdir(partialsDir, function(err, files) {
      if (matches[1]=="hbs") {
 		  matches = /^([^.]+).hbs$/.exec(filename);
 		  var name = matches[1];
-		  var template = fs.readFile(partialsDir + '/' + filename, 'utf8');
+		  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
 		  Handlebars.registerPartial(name, template);
 		}
 	}
