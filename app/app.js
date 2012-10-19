@@ -55,6 +55,10 @@ app.get('/', function(req, res) {
 	$("WorldManager.worlds").find(3, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			previews.preview=r.documents;
 	});
+	if(previews=={})
+	{
+		console.log("MongoDB was not installed or is empty!");
+	}
     res.render('root', previews);
 });
 app.post('/', function(req, res, next){
