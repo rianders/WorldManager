@@ -31,33 +31,16 @@ app.engine('hbs', cons.handlebars);
 app.set('views', __dirname + '/views');
 app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
-
-
-/*$("WorldManager.worlds").save({
-    "preview": [
-        {
-            "src": "./img/negotiationDemo.png",
-            "href": "http://rutgers.jibemix.com/jibe/negotiation/"
-        },
-        {
-            "src": "./img/placeholder.png",
-            "href": "http://rutgers.jibemix.com/jibe/negotiation2/"
-        },
-        {
-            "src": "./img/businessSchool.png",
-            "href": "http://rutgers.jibemix.com/jibe/"
-        }
-    ]
-});*/
+app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/static/builds" }));
 app.get('/', function(req, res) {
-	$("WorldManager.worlds").find(1, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
-		    res.render('index', r.documents[0]);
+	$("WorldManager.worlds").find(3, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+			var previews = {};
+			previews.preview=r.documents;
+		    res.render('index', previews);
 	});
-//db.collection('previews', action)
-//mongoose.connection.db.collection('previews', action);
-
-
 });
 
+app.post('/', function(req, res, next){
+});
 var port = 3000;
 app.listen(port);
