@@ -51,13 +51,16 @@ fs.readdir(partialsDir, function(err, files) {
 
 
 app.get('/', function(req, res) {
-	var previews = {};
 	$("WorldManager.worlds").find(3, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+			var previews = {};
 			previews.preview=r.documents;
+			res.render('root', previews);
 	});
-    res.render('root', previews);
+
 });
 app.post('/', function(req, res, next){
+	console.log(req.body);
+	console.log(req.files);
 	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 	console.log(extension[1]);
 	if(extension[1] == "unity3d") {
