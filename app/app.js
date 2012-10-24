@@ -29,7 +29,7 @@ app.engine('hbs', cons.handlebars);
 app.set('views', __dirname + '/views');
 app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
-app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/static/builds" }));
+app.use(express.bodyParser());
 
 //handlebars partials and helpers
 var partialsDir = __dirname + '/views/partials';
@@ -51,11 +51,16 @@ fs.readdir(partialsDir, function(err, files) {
 
 
 app.get('/', function(req, res) {
-	$("WorldManager.worlds").find(3, function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+	console.log(__dirname);
+	$("WorldManager.worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			var previews = {};
 			previews.preview=r.documents;
 			res.render('root', previews);
 	});
+
+});
+
+app.get('/builds/:id', function(req,res) {
 
 });
 app.post('/', function(req, res, next){
@@ -64,21 +69,27 @@ app.post('/', function(req, res, next){
 	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 	console.log(extension[1]);
 	if(extension[1] == "unity3d") {
+		fs.readFile(req.files.build.path, function(err, data) {
+			fs.writeFile(__dirname+"/static/builds/"+req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"))+req.files.build.name, data, function (err) {
+				if(err) throw err;
+				res.redirect("back");
+			});
+		});
+		fs.readFile(req.files.image.path, function(err, data) {
+			fs.writeFile(__dirname+"/static/img/"+req.files.image.path.substring(req.files.image.path.lastIndexOf("\\"))+req.files.image.name, data, function (err) {
+				if(err) throw err;
+			});
+		});
 		newWorld = req.body;
-		newWorld.world = req.files;
+		newWorld.world = (__dirname+"/static/builds/"+req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"))+req.files.build.name).replace(__dirname+"/static", "./");
+		newWorld.img = (__dirname+"/static/img/"+req.files.image.path.substring(req.files.image.path.lastIndexOf("\\"))+req.files.image.name).replace(__dirname+"/static", "./");
 		$("WorldManager.worlds").save(newWorld);
-		res.redirect("back");
-	}
-	else {
-		console.log("Invalid file - deleting");
-		fs.unlink(req.files.build.path, function (err) { if(err) throw err; }); //invalid file was uploaded - delete it
-		res.redirect("back");
 	}
 });
 app.get('/upload', function(req, res, next){
 console.log("Hello World");
 var formData = {};
-formData.form=[{type: "file", name:"build"}];
+formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
 console.log(formData);
 res.render('root', formData);
 });
