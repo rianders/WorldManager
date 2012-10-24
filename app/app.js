@@ -51,7 +51,6 @@ fs.readdir(partialsDir, function(err, files) {
 
 
 app.get('/', function(req, res) {
-	console.log(__dirname);
 	$("WorldManager.worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			var previews = {};
 			previews.preview=r.documents;
@@ -64,33 +63,29 @@ app.get('/builds/:id', function(req,res) {
 
 });
 app.post('/', function(req, res, next){
-	console.log(req.body);
-	console.log(req.files);
 	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
-	console.log(extension[1]);
 	if(extension[1] == "unity3d") {
+		newWorld = req.body;
+		newWorld.id = req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"));
+		newWorld.world = "./static/builds/"+newWorld.id+req.files.build.name;
+		newWorld.img = "./static/img/"+newWorld.id+req.files.image.name;
 		fs.readFile(req.files.build.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/builds/"+req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"))+req.files.build.name, data, function (err) {
+			fs.writeFile(__dirname+"/static/builds/"+newWorld.id+req.files.build.name, data, function (err) {
 				if(err) throw err;
 				res.redirect("back");
 			});
 		});
 		fs.readFile(req.files.image.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/img/"+req.files.image.path.substring(req.files.image.path.lastIndexOf("\\"))+req.files.image.name, data, function (err) {
+			fs.writeFile(__dirname+"/static/img/"+newWorld.id+req.files.image.name, data, function (err) {
 				if(err) throw err;
 			});
 		});
-		newWorld = req.body;
-		newWorld.world = (__dirname+"/static/builds/"+req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"))+req.files.build.name).replace(__dirname+"/static", "./");
-		newWorld.img = (__dirname+"/static/img/"+req.files.image.path.substring(req.files.image.path.lastIndexOf("\\"))+req.files.image.name).replace(__dirname+"/static", "./");
 		$("WorldManager.worlds").save(newWorld);
 	}
 });
 app.get('/upload', function(req, res, next){
-console.log("Hello World");
 var formData = {};
 formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
-console.log(formData);
 res.render('root', formData);
 });
 var port = 3000;

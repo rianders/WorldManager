@@ -12,6 +12,8 @@ Library/expandedItems
 Library/metadata
 Library/previews
 Library/guidmapper
+app/static/builds
+app/static/img
 Temp
 *.csproj
 *.pidb
