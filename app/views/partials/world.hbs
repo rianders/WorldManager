@@ -1,3 +1,17 @@
+	<script type="text/javascript">
+	<!--
+	function GetUnity() {
+		if (typeof unityObject != "undefined") {
+			return unityObject.getObjectById("unityPlayer");
+		}
+		return null;
+	}
+	if (typeof unityObject != "undefined") {
+		unityObject.embedUnity("unityPlayer", "WebPlayer.unity3d", 600, 450);
+		
+	}
+	-->
+	</script>
 <div id="unityPlayer" style="width: 600px; height: 450px; visibility: visible;">
-	<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.href}}>
+	<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.world}}>
 </div>

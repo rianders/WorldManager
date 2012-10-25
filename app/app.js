@@ -60,23 +60,31 @@ app.get('/', function(req, res) {
 });
 
 app.get('/builds/:id', function(req,res) {
-
+	$("WorldManager.worlds").find({id:req.route.params.id}, function(r) {
+		var world = {};
+		world.world=r.documents[0];
+		console.log(world);
+		res.render('root',world);
+	});
 });
 app.post('/', function(req, res, next){
 	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 	if(extension[1] == "unity3d") {
 		newWorld = req.body;
-		newWorld.id = req.files.build.path.substring(req.files.build.path.lastIndexOf("\\"));
-		newWorld.world = "./static/builds/"+newWorld.id+req.files.build.name;
-		newWorld.img = "./static/img/"+newWorld.id+req.files.image.name;
+		newWorld.id = req.files.build.path.substring(req.files.build.path.lastIndexOf("\\")+2);
+		newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
+		newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
+		newWorld.href = "/builds/"+newWorld.id;
+		fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
+		fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
 		fs.readFile(req.files.build.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/builds/"+newWorld.id+req.files.build.name, data, function (err) {
+			fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {
 				if(err) throw err;
-				res.redirect("back");
+				res.redirect("/");
 			});
 		});
 		fs.readFile(req.files.image.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/img/"+newWorld.id+req.files.image.name, data, function (err) {
+			fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {
 				if(err) throw err;
 			});
 		});
