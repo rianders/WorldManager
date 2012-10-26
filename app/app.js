@@ -8,13 +8,40 @@
  npm install mongous
 */
 var express = require('express')
+  , util = require('util')
   , cons = require('consolidate')
   , Handlebars = require('handlebars')
   , request = require('request')  
   , app = express()
   , fs = require('fs')
-  , $ = require("mongous").Mongous;
+  , $ = require("mongous").Mongous
+  , passport = require('passport')
+  , GoogleStrategy = require('passport-google').Strategy;
 
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(new GoogleStrategy({
+    returnURL: 'http://localhost:3000/auth/google/return',
+    realm: 'http://localhost:3000'
+  },
+  function(identifier, profile, done) {
+	process.nextTick(function () {
+		  
+		  // To keep the example simple, the user's Google profile is returned to
+		  // represent the logged-in user.  In a typical application, you would want
+		  // to associate the Google account with a user record in your database,
+		  // and return that user instead.
+		  profile.identifier = identifier;
+		  return done(null, profile);
+	});
+  }
+));
 
 app.configure('development', function () {
 	app.use(express.logger());
@@ -29,8 +56,12 @@ app.engine('hbs', cons.handlebars);
 app.set('views', __dirname + '/views');
 app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
+app.use(express.cookieParser());
 app.use(express.bodyParser());
-
+app.use(express.session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(app.router);
 //handlebars partials and helpers
 var partialsDir = __dirname + '/views/partials';
 //grab all the files in the partials directory
@@ -91,6 +122,14 @@ app.post('/', function(req, res, next){
 		$("WorldManager.worlds").save(newWorld);
 	}
 });
+
+app.get('/auth/google', passport.authenticate('google', { failureRedirect: '/login' }));
+
+app.get('/auth/google/return', 
+  passport.authenticate('google', { successRedirect: '/',
+                                    failureRedirect: '/' }),   function(req, res) {
+    res.redirect('/');
+  });
 app.get('/upload', function(req, res, next){
 var formData = {};
 formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
