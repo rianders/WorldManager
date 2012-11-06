@@ -60,7 +60,9 @@
               </li> --!>
             </ul>
             <form class="navbar-form pull-right">
+			{{#if isNotAuthenticated}}
 				<a href="/auth/google">Sign In with Google</a>
+			{{/if}}
             </form>
           </div><!--/.nav-collapse -->
         </div>

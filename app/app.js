@@ -84,7 +84,11 @@ fs.readdir(partialsDir, function(err, files) {
 app.get('/', function(req, res) {
 	$("WorldManager.worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			var previews = {};
+			if(!req.isAuthenticated()) {
+				previews.isNotAuthenticated=true; //set to true because 
+			}
 			previews.preview=r.documents;
+			console.log(previews);
 			res.render('root', previews);
 	});
 
@@ -98,6 +102,7 @@ app.get('/builds/:id', function(req,res) {
 		res.render('root',world);
 	});
 });
+
 app.post('/', function(req, res, next){
 	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 	if(extension[1] == "unity3d") {
@@ -130,10 +135,17 @@ app.get('/auth/google/return',
                                     failureRedirect: '/' }),   function(req, res) {
     res.redirect('/');
   });
+  
 app.get('/upload', function(req, res, next){
 var formData = {};
 formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
 res.render('root', formData);
 });
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login')
+}
+
 var port = 3000;
 app.listen(port);
