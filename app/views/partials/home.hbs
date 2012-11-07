@@ -1,16 +1,28 @@
-		 <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>Virtual Worlds </h1> <h2>World Manager</h2>
-        <p><a href="/upload" class="btn btn-primary btn-large">Create a World &raquo;</a></p>
-      </div>
-	  <div class="hero-unit">
-        <p>I hope I exist below the first hero unit</p>
-      </div>
-	 <!-- <div class = "row-fluid"> -->
-	   {{#each preview}} 
-       <!-- <div class="span4"> -->
-          <a href={{this.href}}><img src={{this.img}} alt={{this.name}}/></a>
-       <!-- </div> -->
-		{{/each}}
+	<!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit">
+		<div class = "row-fluid">
+			<h1>Virtual Worlds </h1> <h2>World Manager</h2>
+		</div>
+		<div class = "row-fluid">
+			<div class = "span1">
+				<p><a href="/" class="btn btn-danger">Back</a></p>
+			</div>
+			<div class = "span1">
+				<p><a href="/" class="btn btn-danger">About</a></p>
+			</div>
+			<div class = "span1">
+				<p><a href="/" class="btn btn-danger">Contact</a></p>
+			</div>
+		</div>
+	</div>
+	<div class="hero-unit">
+		<p><a href="/upload" class="btn btn-primary btn-large">Create a World &raquo;</a></p>
+	</div>
+	<!-- <div class = "row-fluid"> -->
+	{{#each preview}} 
+		<!-- <div class="span4"> -->
+			<a href={{this.href}}><img src={{this.img}} alt={{this.name}}/></a>
+		<!-- </div> -->
+	{{/each}}
 	<!-- </div> -->
 	  
