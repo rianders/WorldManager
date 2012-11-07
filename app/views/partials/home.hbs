@@ -1,43 +1,16 @@
 		 <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
-        <h1>World Manager</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <h1>Virtual Worlds </h1> <h2>World Manager</h2>
         <p><a href="/upload" class="btn btn-primary btn-large">Create a World &raquo;</a></p>
       </div>
-	  <div class = "row">
-	   {{#each preview}} 
-        <div class="span4">
-          <a href={{this.href}}><img src={{this.img}} alt={{this.name}}/></a>
-        </div>
-		{{/each}}
-		</div>
+	  <div class="hero-unit">
+        <p>I hope I exist below the first hero unit</p>
       </div>
+	 <!-- <div class = "row-fluid"> -->
+	   {{#each preview}} 
+       <!-- <div class="span4"> -->
+          <a href={{this.href}}><img src={{this.img}} alt={{this.name}}/></a>
+       <!-- </div> -->
+		{{/each}}
+	<!-- </div> -->
 	  
-<!--For nice centered things	  
-	<div class = "row-fluid">
-		<div class = "span10 offset1">	  	
-			<h2>Heading</h2>
-			<p>
-				"Here is a bunch of text that will be taking the place of what would be a picture or perhaps text that makes sense to be in this place."
-			</p>
-		</div>
-	</div>-->
-	
-	<hr>
-	
-<!--For vertical bars on left-->
-<div class = "container-fluid">
-	<div class="row-fluid">
-		<div class = "span1">
-			<p>Here is where you place a texture for the left sidebar</p>
-		</div>
-<!--For the stuff in the center-->
-		<div class = "span10">
-			<p>Here is where you place information for the center of teh screen</p>
-		</div>
-<!--For vertical bars on right-->
-		<div class = "span1">
-			<p>Here is where you place a texture for the right sidebar</p>
-		</div>
-	</div>
-</div>
