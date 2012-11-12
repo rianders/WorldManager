@@ -1,102 +1,11 @@
-<!-- Main hero unit for a primary marketing message or call to action -->
 
-<style type="text/css">
-  .redbackground{
-	background-color: red;
-  }
-</style>
-<div class = "redbackground">
-	<div class="hero-unit">
-		
-		<div class = "row-fluid">
-			<h1>Virtual Worlds <small>World Manager</small> </h1>
-		</div>
-		<div class = "row-fluid">
-			<div class = "span1">
-				<p><a href="/" class="btn btn-danger">Back</a></p>
-			</div>
-			<div class = "span1">
-				<p><a href="/" class="btn btn-danger">About</a></p>
-			</div>
-			<div class = "span1">
-				<p><a href="/" class="btn btn-danger">Contact</a></p>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!--<div class="hero-unit">-->
-	<div class = "container-fluid">
-		<div class = row-fluid">
-			<div class = "span3 bs-docs-sidebar">
-				<ul class = "nav nav-tabs nav-stacked nav-list bs-docs-sidenav affix-top">
-					<li class = "active">
-						<a href="#">Virtual Worlds</a>
-					</li>
-					<li class = "inactive">
-						<a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About</a>
-					</li>
-					<li class = "inactive">
-						<a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Support</a>
-					</li>
-					<li class = "inactive">
-						<a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Virtual Office</a>
-					</li>
-					<li class = "inactive">
-						<a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;World Manager</a>
-					</li>
-					<li class="divider"></li>
-					
-					<!--The social network and downloadable clicks-->
-					<li>
-						<div class = "pagination-centered">
-							<p><a href="/" class="btn btn-primary">F</a>
-							<a href="/" class="btn btn-info">T</a>
-							<a href="/" class="btn btn-warning">B</a></p>
-						</div>
-					</li>
-					<li>
-						<div class = "pagination-centered">
-							<p><a href="/" class="btn btn-inverse">Available on the iPhone App Store</a></p>
-						</div>
-					</li>
-					<li>
-						<div class = "pagination-centered">
-							<p><a href="/" class="btn btn-success">Available on the Android Market</a></p>
-						</div>
-					</li>
-					
-					
-				</ul>
-			</div>
-			<div class = "span9">
-				<ul class="thumbnails">
-					<li class="span2">
-						<a href="" class="thumbnail">
-							<img src="" alt="Create Your Own World">
-						</a>
-					</li>
-					<li class="span2">
-						<a href="#" class="thumbnail">
-							<img src="" alt="Negotiation Scenario">
-						</a>
-					</li>
-					<li class="span2">
-						<a href="#" class="thumbnail">
-							<img src="" alt="Business School">
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-<!--</div>-->
-
-<!-- <div class = "row-fluid"> -->
+<ul class="thumbnails">
 {{#each preview}} 
-	<!-- <div class="span4"> -->
-		<a href={{this.href}}><img src={{this.img}} alt={{this.name}}/></a>
-	<!-- </div> -->
+	<li class="span3">
+		<a href={{this.href}} class="thumbnail"><img src={{this.img}} alt={{this.name}}/></a>
+		<div class = "caption pagination-centered">
+			<h3>{{this.name}}</h3>
+		</div>
+	</li>
 {{/each}}
-<!-- </div> -->
-	  
+</ul>
