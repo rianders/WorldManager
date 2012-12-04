@@ -142,6 +142,13 @@ formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type
 res.render('root', formData);
 });
 
+app.get('/about', function(req, res, next){
+formData = {};
+formData.about=true;
+res.render('root', formData);
+});
+
+
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')

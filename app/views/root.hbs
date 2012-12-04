@@ -87,8 +87,8 @@
 					</div>
 					<div class = "row-fluid">
 						<a class = "btn btn-danger"	href="/">Home</a>
-						<a class="btn btn-danger" href="/">About</a>
-						<a class="btn btn-danger" href="/">Contact</a>
+						<a class="btn btn-danger" href="/about">About</a>
+						<a class="btn btn-danger" href="/contact">Contact</a>
 						<a class="btn btn-danger" href="/upload">Upload</a>
 					</div>
 
@@ -195,9 +195,15 @@
 						{{> upload}}
 					{{else}}
 						{{> home}}
+						{{#if about}}
+						  {{> about}}
+					    {{else}}
+							{{> home}}
+						{{/if}}
 					{{/if}}
 					{{/if}}
 				</div>
+
 			</div>
 		</div>	
 		
