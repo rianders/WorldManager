@@ -197,16 +197,22 @@
 					{{#if world}}
 						{{> world}}
 					{{else}}
-					{{#if form}}
-						{{> upload}}
-					{{else}}
-						{{> home}}
-						{{#if about}}
-						  {{> about}}
+						{{#if form}}
+							{{> upload}}
 						{{else}}
 							{{> home}}
+							
+							{{#if about}}
+								{{> about}}
+							{{else}}
+								{{> home}}
+							{{/if}}
+							{{#if contact}}
+								{{> contact}}
+							{{else}}
+								{{> home}}
+							{{/if}}
 						{{/if}}
-					{{/if}}
 					{{/if}}
 				</div>
 			</div>

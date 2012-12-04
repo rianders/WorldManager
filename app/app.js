@@ -148,6 +148,12 @@ formData.about=true;
 res.render('root', formData);
 });
 
+app.get('/contact', function(req, res, next){
+formData = {};
+formData.contact=true;
+res.render('root', formData);
+});
+
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
