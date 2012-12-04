@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -12,7 +12,11 @@
     <style type="text/css">
       body {
 		padding-top:5px;
+		background-color: #FFFFCC;
       }
+	  .pagination-centered{
+		text-align: center;
+	  }
     </style>
     <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
@@ -26,11 +30,11 @@
   </head>
 
 	<body>
-
+		
 		<div class="container">
 	  
 			<!--This is the top bar on the page-->
-
+		
 			<div class="navbar">
 				<div class="navbar-inner">
 					<div class="container">
@@ -39,20 +43,20 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</a>
-						<a class="brand" href="/">Rutgers Home</a>
+						<a class="brand" href="http://www.rutgers.edu/">Rutgers Home</a>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
 								<li class = "divider-vertical"></li>
 								<li class = "inactive">
-									<a href="/">New Brunswick</a>
+									<a href="http://nb.rutgers.edu/">New Brunswick</a>
 								</li>
 								<li class = "divider-vertical"></li>
 								<li class = "inactive">
-									<a href="#about">Newark</a>
+									<a href="http://www.newark.rutgers.edu/">Newark</a>
 								</li>
 								<li class = "divider-vertical"></li>
 								<li class = "inactive">
-									<a href="#contact">Camden</a>
+									<a href="http://www.camden.rutgers.edu/">Camden</a>
 								</li>
 							</ul>
 							<div class="navbar pull-right">
@@ -75,7 +79,7 @@
 
 		<style type="text/css">
 			.redbackground{
-				background-color: red;
+				background-color: #CC0033;
 			}
 		</style>
 		
@@ -148,6 +152,7 @@
 			</div>
 			
 			<div class = row-fluid">
+			
 				<div class = "span3 bs-docs-sidebar">
 					<ul class = "nav nav-tabs nav-stacked nav-list bs-docs-sidenav affix-top">
 						<li class = "inactive">
@@ -170,23 +175,24 @@
 						<!--The social network and downloadable clicks-->
 						<li>
 							<div class = "pagination-centered">
-								<p><a href="/" class="btn btn-primary">F</a>
-								<a href="/" class="btn btn-info">T</a>
-								<a href="/" class="btn btn-warning">B</a></p>
+								<p><a href="https://www.facebook.com/ruonlinehybrid" class="btn btn-primary">F</a>
+								<a href="http://twitter.com/ruonlinehybrid" class="btn btn-info">T</a>
+								<a href="http://onlinelearning.rutgers.edu/journal" class="btn btn-warning">B</a></p>
 							</div>
 						</li>
 						<li>
 							<div class = "pagination-centered">
-								<p><a href="/" class="btn btn-inverse">Available on the iPhone App Store</a></p>
+								<p><a href="https://itunes.apple.com/us/app/rutgers-online-mobile/id472392676?mt=8" class="btn btn-inverse">Available on the iPhone App Store</a></p>
 							</div>
 						</li>
 						<li>
 							<div class = "pagination-centered">
-								<p><a href="/" class="btn btn-success">Available on the Android Market</a></p>
+								<p><a href="https://play.google.com/store/apps/details?id=com.ecollege.android.rutgers" class="btn btn-success">Available on the Android Market</a></p>
 							</div>
 						</li>
 					</ul>
 				</div>
+				
 				<div class = "span8">
 					{{#if world}}
 						{{> world}}
@@ -197,20 +203,17 @@
 						{{> home}}
 						{{#if about}}
 						  {{> about}}
-					    {{else}}
+						{{else}}
 							{{> home}}
 						{{/if}}
 					{{/if}}
 					{{/if}}
 				</div>
-
 			</div>
 		</div>	
-		
-		<hr>
-		
-		<footer>
-			<div class = "footer pagination-centered">
+			
+		<footer class="navbar navbar-fixed-bottom pagination-centered">
+			<div class = "container">
 				<p>Copyright © 2012, Rutgers, The State University of New Jersey, an equal opportunity, affirmative action institution.</p>
 			</div>
 		</footer>
