@@ -159,6 +159,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
 }
-
 var port = 3000;
+console.log("WorldManger now listening on port:" + port);
+
 app.listen(port);
