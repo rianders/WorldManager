@@ -92,14 +92,8 @@
 					<div class = "row">
 						<h1>Virtual Worlds <small>World Manager</small> </h1>
 					</div>
-					<div class = "row-fluid">
-						<a class = "btn btn-danger"	href="/">Home</a>
-						<a class="btn btn-danger" href="/about">About</a>
-						<a class="btn btn-danger" href="/contact">Contact</a>
-						<a class="btn btn-danger" href="/upload">Upload</a>
-					</div>
 
-					<br><br>				
+					<br><br>			
 					<div class="masthead clearfix">
 						<nav class="grid-inner primary-menu" role="navigation">
 							<ul class="menu">
@@ -153,6 +147,17 @@
 					</div>
 				</div>
 			</div>
+			
+			<div class = "row-fluid">
+				<div class = "span4 offset3">
+					<a class = "btn btn-danger"	href="/">Home</a>
+					<a class="btn btn-danger" href="/about">About</a>
+					<a class="btn btn-danger" href="/contact">Contact</a>
+					<a class="btn btn-danger" href="/upload">Upload</a>
+				</div>
+			</div>
+			
+			<br>
 			
 			<div class = "row">
 			
@@ -220,24 +225,21 @@
 							{{> upload}}
 						{{else}}
 							{{> home}}
-							
-							{{#if about}}
-								{{> about}}
-							{{else}}
-								{{> home}}
-							{{/if}}
-							{{#if contact}}
-								{{> contact}}
-							{{else}}
-								{{> home}}
-							{{/if}}
+						{{#if about}}
+							{{> about}}
+						{{/if}}
+						{{#if contact}}
+							{{> contact}}
+						{{/if}}
 						{{/if}}
 					{{/if}}
 				</div>
 			</div>
 		</div>	
 			
-		<footer class="navbar navbar-fixed-bottom pagination-centered">
+		<hr>
+			
+		<footer class="pagination-centered">
 			<div class = "container">
 				<p>Copyright © 2012, Rutgers, The State University of New Jersey, an equal opportunity, affirmative action institution.</p>
 			</div>
