@@ -83,12 +83,44 @@ fs.readdir(partialsDir, function(err, files) {
 	}
 	});
 
-Handlebars.registerHelper('embed', function(val) {
+Handlebars.registerHelper('embed', function(val, data) {
 		var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
-		console.log(output);
-		return output;
+		output = Handlebars.compile(output);
+		console.log(this);
+		return output(this);;
   });
 
+  
+Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
+
+    if (arguments.length < 3)
+        throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+
+    operator = options.hash.operator || "==";
+
+    var operators = {
+        '==':       function(l,r) { return l == r; },
+        '===':      function(l,r) { return l === r; },
+        '!=':       function(l,r) { return l != r; },
+        '<':        function(l,r) { return l < r; },
+        '>':        function(l,r) { return l > r; },
+        '<=':       function(l,r) { return l <= r; },
+        '>=':       function(l,r) { return l >= r; },
+        'typeof':   function(l,r) { return typeof l == r; }
+    }
+
+    if (!operators[operator])
+        throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
+
+    var result = operators[operator](lvalue,rvalue);
+
+    if( result ) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+  });
+  
 app.get('/', function(req, res) {
 	$(config.db+".worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			var previews = {};
