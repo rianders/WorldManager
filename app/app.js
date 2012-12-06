@@ -16,7 +16,8 @@ var express = require('express')
   , fs = require('fs')
   , $ = require("mongous").Mongous
   , passport = require('passport')
-  , GoogleStrategy = require('passport-google').Strategy;
+  , GoogleStrategy = require('passport-google').Strategy
+  , path = require('path');
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -27,8 +28,8 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new GoogleStrategy({
-    returnURL: 'http://localhost:3000/auth/google/return',
-    realm: 'http://localhost:3000'
+    returnURL:'localhost:3000/auth/google/return',
+    realm: 'localhost:3000/'
   },
   function(identifier, profile, done) {
 	process.nextTick(function () {
@@ -70,11 +71,12 @@ fs.readdir(partialsDir, function(err, files) {
 	{
 		filename=files[filename];
 //check that the file is a handlebars file
-	 var matches = /\.([0-9a-z]+)(?:[\?#]|$)/i.exec(filename);
-     if (matches[1]=="hbs") {
-		  matches = /^([^.]+).hbs$/.exec(filename);
-		  var name = matches[1];
+     		var filetype = path.extname(filename);
+     		console.log("registering file: " + filename);
+     if (filetype==".hbs") {
+		  var name = path.basename(filename, filetype);
 		  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
+		  console.log(name);
 		  Handlebars.registerPartial(name, template);
 		}
 	}
@@ -104,10 +106,13 @@ app.get('/builds/:id', function(req,res) {
 });
 
 app.post('/', function(req, res, next){
-	var extension = (req.files.build.name).match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
-	if(extension[1] == "unity3d") {
+	console.log("Received new world!");
+	console.log(req.files.build);
+	var extension = path.extname(req.files.build.name);
+	console.log(extension);
+	if(extension == ".unity3d") {
 		newWorld = req.body;
-		newWorld.id = req.files.build.path.substring(req.files.build.path.lastIndexOf("\\")+2);
+		newWorld.id = path.basename(req.files.build.path);
 		newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
 		newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
 		newWorld.href = "/builds/"+newWorld.id;
