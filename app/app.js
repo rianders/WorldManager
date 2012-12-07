@@ -28,8 +28,8 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new GoogleStrategy({
-    returnURL:'localhost:3000/auth/google/return',
-    realm: 'localhost:3000/'
+    returnURL:'http://localhost:3000/auth/google/return',
+    realm: 'http://localhost:3000/'
   },
   function(identifier, profile, done) {
 	process.nextTick(function () {
@@ -82,6 +82,11 @@ fs.readdir(partialsDir, function(err, files) {
 	}
 	});
 
+Handlebars.registerHelper('embed', function(val) {
+		var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
+		console.log(output);
+		return output;
+  });
 
 app.get('/', function(req, res) {
 	$("WorldManager.worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
@@ -90,6 +95,7 @@ app.get('/', function(req, res) {
 				previews.isNotAuthenticated=true; //set to true because 
 			}
 			previews.preview=r.documents;
+			previews.home=true;
 			console.log(previews);
 			res.render('root', previews);
 	});
@@ -101,35 +107,53 @@ app.get('/builds/:id', function(req,res) {
 		var world = {};
 		world.world=r.documents[0];
 		console.log(world);
+		if(req.isAuthenticated())
+		{
+			world.isNotAuthenticated=true;
+			if(req.user==world.user)
+			{
+				console.log("This is my world!");
+				world.isMine=true;
+			}
+			
+		}
 		res.render('root',world);
 	});
 });
 
 app.post('/', function(req, res, next){
-	console.log("Received new world!");
-	console.log(req.files.build);
-	var extension = path.extname(req.files.build.name);
-	console.log(extension);
-	if(extension == ".unity3d") {
-		newWorld = req.body;
-		newWorld.id = path.basename(req.files.build.path);
-		newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
-		newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
-		newWorld.href = "/builds/"+newWorld.id;
-		fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
-		fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
-		fs.readFile(req.files.build.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {
-				if(err) throw err;
-				res.redirect("/");
+	if(req.isAuthenticated())
+	{
+		console.log("Received new world!");
+		console.log(req.files.build);
+		var extension = path.extname(req.files.build.name);
+		console.log(extension);
+		if(extension == ".unity3d") {
+			newWorld = req.body;
+			newWorld.id = path.basename(req.files.build.path);
+			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
+			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
+			newWorld.href = "/builds/"+newWorld.id;
+			newWorld.user = req.user;
+			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
+			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
+			fs.readFile(req.files.build.path, function(err, data) {
+				fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {
+					if(err) throw err;
+					res.redirect("/");
+				});
 			});
-		});
-		fs.readFile(req.files.image.path, function(err, data) {
-			fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {
-				if(err) throw err;
+			fs.readFile(req.files.image.path, function(err, data) {
+				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {
+					if(err) throw err;
+				});
 			});
-		});
-		$("WorldManager.worlds").save(newWorld);
+			$("WorldManager.worlds").save(newWorld);
+		}
+	}
+	else
+	{
+		res.redirect('/auth/google');
 	}
 });
 
@@ -142,28 +166,49 @@ app.get('/auth/google/return',
   });
   
 app.get('/upload', function(req, res, next){
-var formData = {};
-formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
-res.render('root', formData);
+if(req.isAuthenticated())
+{
+	var formData = {};
+	formData.upload=true;
+	formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
+	res.render('root', formData);
+}
+else
+{
+	res.redirect('/auth/google');
+}
 });
 
 app.get('/about', function(req, res, next){
 formData = {};
 formData.about=true;
+if(!req.isAuthenticated())
+{
+	formData.isNotAuthenticated=true;
+}
 res.render('root', formData);
 });
 
 app.get('/contact', function(req, res, next){
 formData = {};
 formData.contact=true;
+if(!req.isAuthenticated())
+{
+	formData.isNotAuthenticated=true;
+}
 res.render('root', formData);
 });
-
-
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
-}
+app.get('/:id', function(req, res, next){
+	console.log(req.route)
+	formData={};
+	formData.path=req.route.params.id;
+	if(!req.isAuthenticated())
+	{
+		formData.isNotAuthenticated=true;
+	}
+	console.log(formData);
+	res.render('root', formData);
+});
 var port = 3000;
 console.log("WorldManger now listening on port:" + port);
 

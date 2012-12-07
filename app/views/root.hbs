@@ -27,7 +27,7 @@
 	  
     <![endif]-->
 	
-	<link rel="shortcut icon" href="/img/favicon.ico">
+
 	
   </head>
 
@@ -218,18 +218,24 @@
 				<div class = "span8">
 					{{#if world}}
 						{{> world}}
-					{{else}}
-						{{#if form}}
-							{{> upload}}
-						{{else}}
-							{{> home}}
-						{{#if about}}
-							{{> about}}
-						{{/if}}
-						{{#if contact}}
-							{{> contact}}
-						{{/if}}
-						{{/if}}
+					{{/if}}
+					{{#if upload}}
+						{{> upload}}
+					{{/if}}
+					{{#if home}}
+						{{> home}}
+					{{/if}}
+					{{#if about}}
+						{{> about}}
+					{{/if}}
+					{{#if contact}}
+						{{> contact}}
+					{{/if}}
+					{{#if home}}
+						{{> home}}
+					{{/if}}
+					{{#if path}}
+						{{#embed path}}{{/embed}}
 					{{/if}}
 				</div>
 			</div>
