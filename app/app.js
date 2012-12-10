@@ -17,7 +17,8 @@ var express = require('express')
   , $ = require("mongous").Mongous
   , passport = require('passport')
   , GoogleStrategy = require('passport-google').Strategy
-  , path = require('path');
+  , path = require('path')
+  , config = require('./config');
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -28,8 +29,8 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new GoogleStrategy({
-    returnURL:'http://localhost:3000/auth/google/return',
-    realm: 'http://localhost:3000/'
+    returnURL:config.url+':'+config.port+'/auth/google/return',
+    realm: config.url+':'+config.port
   },
   function(identifier, profile, done) {
 	process.nextTick(function () {
@@ -89,7 +90,7 @@ Handlebars.registerHelper('embed', function(val) {
   });
 
 app.get('/', function(req, res) {
-	$("WorldManager.worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+	$(config.db+".worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
 			var previews = {};
 			if(!req.isAuthenticated()) {
 				previews.isNotAuthenticated=true; //set to true because 
@@ -97,13 +98,14 @@ app.get('/', function(req, res) {
 			previews.preview=r.documents;
 			previews.home=true;
 			console.log(previews);
+			console.log("Loading home page");
 			res.render('root', previews);
 	});
 
 });
 
 app.get('/builds/:id', function(req,res) {
-	$("WorldManager.worlds").find({id:req.route.params.id}, function(r) {
+	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 		var world = {};
 		world.world=r.documents[0];
 		console.log(world);
@@ -148,7 +150,7 @@ app.post('/', function(req, res, next){
 					if(err) throw err;
 				});
 			});
-			$("WorldManager.worlds").save(newWorld);
+			$(config.db+".worlds").save(newWorld);
 		}
 	}
 	else
@@ -179,25 +181,6 @@ else
 }
 });
 
-app.get('/about', function(req, res, next){
-formData = {};
-formData.about=true;
-if(!req.isAuthenticated())
-{
-	formData.isNotAuthenticated=true;
-}
-res.render('root', formData);
-});
-
-app.get('/contact', function(req, res, next){
-formData = {};
-formData.contact=true;
-if(!req.isAuthenticated())
-{
-	formData.isNotAuthenticated=true;
-}
-res.render('root', formData);
-});
 app.get('/:id', function(req, res, next){
 	console.log(req.route)
 	formData={};
@@ -209,7 +192,7 @@ app.get('/:id', function(req, res, next){
 	console.log(formData);
 	res.render('root', formData);
 });
-var port = 3000;
-console.log("WorldManger now listening on port:" + port);
+var port = config.port;
+console.log("WorldManager now listening on port:" + port);
 
 app.listen(port);
