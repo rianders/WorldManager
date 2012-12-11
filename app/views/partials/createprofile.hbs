@@ -1,0 +1,24 @@
+<form>
+  <fieldset>
+    <legend>Create Profile</legend>
+    <label>First Name</label>
+    <input type="text" placeholder="First Name">
+	<label>Last Name</label>
+    <input type="text" placeholder="Last Name">
+	<label>E-mail</label>
+    <input type="text" placeholder="E-mail">
+	<label>Website</label>
+    <input type="text" placeholder="Website">
+	
+	<form action="/" method="post" enctype="multipart/form-data">
+		{{#each form}}
+		<p>{{this.desc}} : <br> <input type={{this.type}} name={{this.name}}></input></p>
+		{{/each}}
+	</form>
+		
+    <label class="checkbox">
+      <input type="checkbox"> Do you want to allow people to view your profile?
+    </label>
+    <button type="submit" class="btn">Create Profile</button>
+  </fieldset>
+</form>

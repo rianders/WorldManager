@@ -1,30 +1,31 @@
-<section id="main-content" role="main">
-
-	<header>
-		<h1 id="page-title">Contact</h1> 
-	</header>
+<body>
+	<form>
+		<fieldset>
+			<legend>Contact</legend>
+			<label>Name</label>
+			<input type="text" placeholder="Name">
+			<label>What are you sending us?</label>
+			<select>
+				<option>Ask Question</option>
+				<option>Report Bug</option>
+				<option>Request Feature</option>
+			</select>
+			<br>
+			<textarea rows="4"></textarea>
+			
+			{{#if question}}
+				<span class="help-block">Tell us about your question.</span>
+			{{/if}}
+			{{#if bug}}
+				<span class="help-block">Give as much detail as possible please. Browser, operating system, etc. Thanks!</span>
+			{{/if}}
+			{{#if feature}}
+				<span class="help-block">Tell us about the feature you'd like us to add.</span>
+			{{/if}}
+			
+			<button type="submit" class="btn">Submit</button>
+		</fieldset>
+	</form>
+</body>
                 
-	<div id="content">  
-		<div class="region region-content">
-			<div id="block-system-main" class="block block-system">
-				<div class="block-inner clearfix">
-					<div class="block-content content">
-						<article id="article-13" class="article article-type-page clearfix" contact="/contact-virtualworlds" typeof="foaf:Document" role="article">
-							<div class="article-content">
-								<div class="field field-name-body field-type-text-with-summary field-label-hidden">
-									<div class="field-items">
-										<div class="field-item even" property="content:encoded">
-											<div>Rick Anderson</div>
-											<div>E-mail: rianders@docs.rutgers.edu</div>
-											<div>&nbsp;</div>  
-										</div>
-									</div>
-								</div>
-							</div>
-						</article>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>    
-</section>
+	

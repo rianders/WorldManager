@@ -147,11 +147,87 @@
 			</div>
 			
 			<div class = "row-fluid">
-				<div class = "span5 offset3">
-					<a class = "btn btn-large btn-danger"	href="/">Home</a>
-					<a class="btn btn-large btn-danger" href="/about">About</a>
-					<a class="btn btn-large btn-danger" href="/contact">Contact</a>
-					<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+				<div class = "offset3">
+					{{#if home}}
+						<a class ="btn btn-large btn-danger active" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if myworlds}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger active" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if myprofile}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger active" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if createworld}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger active" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if upload}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger active" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if about}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger active" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if contact}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger active" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger" href="/support">Support</a>
+					{{/if}}
+					{{#if support}}
+						<a class ="btn btn-large btn-danger" href="/">Home</a>
+						<a class="btn btn-large btn-danger" href="/myworlds">My Worlds</a>
+						<a class="btn btn-large btn-danger" href="/myprofile">My Profile</a>
+						<a class="btn btn-large btn-danger" href="/createworld">Create World</a>
+						<a class="btn btn-large btn-danger" href="/upload">Upload</a>
+						<a class="btn btn-large btn-danger" href="/about">About</a>
+						<a class="btn btn-large btn-danger" href="/contact">Contact</a>
+						<a class="btn btn-large btn-danger active" href="/support">Support</a>
+					{{/if}}
 				</div>
 			</div>
 			
@@ -224,6 +300,24 @@
 					{{/if}}
 					{{#if home}}
 						{{> home}}
+					{{/if}}
+					{{#if myworlds}}
+						{{> myworlds}}
+					{{/if}}
+					{{#if myprofile}}
+						{{> myprofile}}
+					{{/if}}
+					{{#if createworld}}
+						{{> createworld}}
+					{{/if}}
+					{{#if support}}
+						{{> support}}
+					{{/if}}
+					{{#if login}}
+						{{> login}}
+					{{/if}}
+					{{#if createprofile}}
+						{{> createprofile}}
 					{{/if}}
 					{{#if path}}
 						{{#embed path}}{{/embed}}

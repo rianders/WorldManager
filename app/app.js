@@ -181,6 +181,20 @@ else
 }
 });
 
+app.get('/createprofile', function(req, res, next){
+/*if(req.isAuthenticated())
+{*/
+	var formData = {};
+	formData.createprofile=true;
+	formData.form=[{desc:"Profile Picture", type: "file", name:"image"}];
+	res.render('root', formData);
+/*}
+else
+{
+	res.redirect('/auth/google');
+}*/
+});
+
 app.get('/:id', function(req, res, next){
 	console.log(req.route)
 	formData={};
