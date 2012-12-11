@@ -12,6 +12,7 @@ Library/expandedItems
 Library/metadata
 Library/previews
 Library/guidmapper
+app/config.js
 Temp
 *.csproj
 *.pidb
