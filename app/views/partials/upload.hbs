@@ -1,6 +1,22 @@
-<form action="/" method="post" enctype="multipart/form-data">
-{{#each form}}
-<p>{{this.desc}} : <input type={{this.type}} name={{this.name}}></input></p>
-{{/each}}
-<p><input type="Submit" name="Submit" value="Submit"></p>
+<form>
+  <fieldset>
+    <legend>Upload</legend>
+    <label>Title</label>
+    <input type="text" placeholder="Title">
+    <label>Info</label>
+	<textarea rows="4"></textarea>
+	<form action="/" method="post" enctype="multipart/form-data">
+		{{#each form}}
+			<p>{{this.desc}} : <br> <input type={{this.type}} name={{this.name}}></input></p>
+		{{/each}}
+	</form>
+    <label class="checkbox">
+      <input type="checkbox"> Make this build private
+    </label>
+    <button type="submit" class="btn">Submit</button>
+  </fieldset>
 </form>
+
+<p><input type="Submit" name="Submit" value="Submit"></p>
+
+
