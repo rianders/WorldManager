@@ -213,6 +213,10 @@ else
 }
 });
 
+app.get('/contact', function(req, res, next){
+	res.redirect('https://github.com/RutgersUniversityVirtualWorlds/WorldManager/issues');
+});
+
 app.get('/createprofile', function(req, res, next){
 if(req.isAuthenticated())
 {
