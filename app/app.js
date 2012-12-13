@@ -159,10 +159,10 @@ app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		console.log("Received new world!");
-		console.log(req.files.build);
 		var extension = path.extname(req.files.build.name);
-		console.log(extension);
 		if(extension == ".unity3d") {
+			console.log(req.body);
+			console.log("End of body");
 			newWorld = req.body;
 			newWorld.id = path.basename(req.files.build.path);
 			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
@@ -187,7 +187,7 @@ app.post('/', function(req, res, next){
 	}
 	else
 	{
-		res.redirect('/auth/google');
+		res.redirect('/login');
 	}
 });
 
@@ -204,27 +204,27 @@ if(req.isAuthenticated())
 {
 	var formData = {};
 	formData.upload=true;
-	formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}, {desc:"Name", type:"text", name:"name"}];
+	formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}];
 	res.render('root', formData);
 }
 else
 {
-	res.redirect('/auth/google');
+	res.redirect('/login');
 }
 });
 
 app.get('/createprofile', function(req, res, next){
-/*if(req.isAuthenticated())
-{*/
+if(req.isAuthenticated())
+{
 	var formData = {};
 	formData.createprofile=true;
 	formData.form=[{desc:"Profile Picture", type: "file", name:"image"}];
 	res.render('root', formData);
-/*}
+}
 else
 {
-	res.redirect('/auth/google');
-}*/
+	res.redirect('/login');
+}
 });
 
 app.get('/:id', function(req, res, next){
