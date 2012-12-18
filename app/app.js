@@ -76,9 +76,11 @@ fs.readdir(partialsDir, function(err, files) {
      		console.log("registering file: " + filename);
      if (filetype==".hbs") {
 		  var name = path.basename(filename, filetype);
+		  //var info = path.basename(filename, filetype);								//INFO COPYING NAME
 		  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
 		  console.log(name);
 		  Handlebars.registerPartial(name, template);
+		  //Handlebars.registerPartial(info, template);									//INFO COPYING NAME
 		}
 	}
 	});
@@ -159,26 +161,40 @@ app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		console.log("Received new world!");
+		
+		//var extension = path.extname(req.files.build.name.info);																//INFO COPYING NAME
 		var extension = path.extname(req.files.build.name);
+		
 		if(extension == ".unity3d") {
 			console.log(req.body);
 			console.log("End of body");
 			newWorld = req.body;
 			newWorld.id = path.basename(req.files.build.path);
+			
+			//newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name.info;												//INFO COPYING NAME
 			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
+			
+			//newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name.info;													//INFO COPYING NAME
 			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
+			
 			newWorld.href = "/builds/"+newWorld.id;
 			newWorld.user = req.user;
 			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
 			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
 			fs.readFile(req.files.build.path, function(err, data) {
+				
+				//fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name.info, data, function (err) {		//INFO COPYING NAME
 				fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {
+					
 					if(err) throw err;
 					res.redirect("/");
 				});
 			});
 			fs.readFile(req.files.image.path, function(err, data) {
-				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {
+				
+				//fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name.info, data, function (err) {			//INFO COPYING NAME
+				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {	
+					
 					if(err) throw err;
 				});
 			});
@@ -200,11 +216,13 @@ app.get('/auth/google/return',
   });
   
 app.get('/upload', function(req, res, next){
+console.log("in upload get");
 if(req.isAuthenticated())
 {
 	var formData = {};
 	formData.upload=true;
-	formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}];
+	formData.form=[{desc:"Name", type:"text", name:"name"}, {desc:"Info", type:"textarea", info:"info"}, {desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}];
+	console.log("in upload if");
 	res.render('root', formData);
 }
 else
@@ -214,7 +232,7 @@ else
 });
 
 app.get('/contact', function(req, res, next){
-	res.redirect('https://github.com/RutgersUniversityVirtualWorlds/WorldManager/issues');
+	res.redirect('http://rutgers-virtual-worlds.tenderapp.com/');
 });
 
 app.get('/createprofile', function(req, res, next){
