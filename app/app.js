@@ -12,36 +12,36 @@ var express = require('express')
   , config = require('./config');
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+	done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+	done(null, obj);
 });
 
 passport.use(new GoogleStrategy({
-    returnURL:config.url+':'+config.port+'/auth/google/return',
-    realm: config.url+':'+config.port
-  },
-  function(identifier, profile, done) {
+	returnURL:config.url+':'+config.port+'/auth/google/return',
+	realm: config.url+':'+config.port
+},
+
+function(identifier, profile, done) {
 	process.nextTick(function () {
-		  
-		  // To keep the example simple, the user's Google profile is returned to
-		  // represent the logged-in user.  In a typical application, you would want
-		  // to associate the Google account with a user record in your database,
-		  // and return that user instead.
-		  profile.identifier = identifier;
-		  return done(null, profile);
+		// To keep the example simple, the user's Google profile is returned to
+		// represent the logged-in user.  In a typical application, you would want
+		// to associate the Google account with a user record in your database,
+		// and return that user instead.
+		profile.identifier = identifier;
+		return done(null, profile);
 	});
-  }
-));
+}));
 
 app.configure('development', function () {
 	app.use(express.logger());
 	app.use(express.errorHandler({
 		dumpExceptions: true,
-		showStack: true}))
-	});
+		showStack: true
+	}))
+});
 
 // set .hbs as the default extension 
 app.set('view engine', 'hbs');
@@ -55,37 +55,40 @@ app.use(express.session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
+
 //handlebars partials and helpers
 var partialsDir = __dirname + '/views/partials';
+
 //grab all the files in the partials directory
 fs.readdir(partialsDir, function(err, files) {
 	for(var filename in files)
 	{
 		filename=files[filename];
-//check that the file is a handlebars file
-     		var filetype = path.extname(filename);
-			console.log("registering file: " + filename);
-     if (filetype==".hbs") {
-		  var name = path.basename(filename, filetype);	
-		  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
-		  console.log(name);
-		  Handlebars.registerPartial(name, template);
+		//check that the file is a handlebars file
+		var filetype = path.extname(filename);
+		console.log("registering file: " + filename);
+		if (filetype==".hbs") {
+			var name = path.basename(filename, filetype);	
+			var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
+			console.log(name);
+			Handlebars.registerPartial(name, template);
 		}
 	}
-	});
+});
 
 Handlebars.registerHelper('embed', function(val, data) {
-		var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
-		output = Handlebars.compile(output);
-		console.log(this);
-		return output(this);;
+	var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
+	output = Handlebars.compile(output);
+	console.log(this);
+	return output(this);;
   });
 
   
 Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
 
-    if (arguments.length < 3)
+    if (arguments.length < 3){
         throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+	}
 
     operator = options.hash.operator || "==";
 
@@ -100,8 +103,9 @@ Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
         'typeof':   function(l,r) { return typeof l == r; }
     }
 
-    if (!operators[operator])
+    if (!operators[operator]){
         throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
+	}
 
     var result = operators[operator](lvalue,rvalue);
 
@@ -110,19 +114,19 @@ Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
     } else {
         return options.inverse(this);
     }
-  });
+});
   
 app.get('/', function(req, res) {
 	$(config.db+".worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
-			var previews = {};
-			if(!req.isAuthenticated()) {
-				previews.isNotAuthenticated=true; //set to true because 
-			}
-			previews.preview=r.documents;
-			previews.home=true;
-			console.log(previews);
-			console.log("Loading home page");
-			res.render('root', previews);
+		var previews = {};
+		if(!req.isAuthenticated()) {
+			previews.isNotAuthenticated=true; //set to true because 
+		}
+		previews.preview=r.documents;
+		previews.home=true;
+		console.log(previews);
+		console.log("Loading home page");
+		res.render('root', previews);
 	});
 
 });
@@ -192,35 +196,34 @@ app.get('/auth/google/return',
   });
   
 app.get('/upload', function(req, res, next){
-if(req.isAuthenticated())
-{
-	var formData = {};
-	formData.upload=true;
-	res.render('root', formData);
-}
-else
-{
-	res.redirect('/login');
-}
+	if(req.isAuthenticated())
+	{
+		var formData = {};
+		formData.upload=true;
+		res.render('root', formData);
+	}
+	else
+	{
+		res.redirect('/login');
+	}
 });
-
 
 app.get('/contact', function(req, res, next){
 	res.redirect('http://rutgers-virtual-worlds.tenderapp.com/');
 });
 
 app.get('/createprofile', function(req, res, next){
-if(req.isAuthenticated())
-{
-	var formData = {};
-	formData.createprofile=true;
-	formData.form=[{desc:"Profile Picture", type: "file", name:"image"}];
-	res.render('root', formData);
-}
-else
-{
-	res.redirect('/login');
-}
+	if(req.isAuthenticated())
+	{
+		var formData = {};
+		formData.createprofile=true;
+		formData.form=[{desc:"Profile Picture", type: "file", name:"image"}];
+		res.render('root', formData);
+	}
+	else
+	{
+		res.redirect('/login');
+	}
 });
 
 app.get('/:id', function(req, res, next){
@@ -234,6 +237,7 @@ app.get('/:id', function(req, res, next){
 	console.log(formData);
 	res.render('root', formData);
 });
+
 var port = config.port;
 console.log("WorldManager now listening on port:" + port);
 

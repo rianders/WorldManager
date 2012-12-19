@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-<form>
-  <fieldset>
-    <legend>Upload</legend>
-    <label>Title</label>
-    <input type="text" placeholder="Title">
-    <label>Info</label>
-	<textarea rows="4"></textarea>
-	<form action="/" method="post" enctype="multipart/form-data">
-		{{#each form}}
-			<p>{{this.desc}} : <br> <input type={{this.type}} name={{this.name}}></input></p>
-		{{/each}}
-	</form>
-    <label class="checkbox">
-      <input type="checkbox"> Make this build private
-    </label>
-    <button type="submit" class="btn">Submit</button>
-  </fieldset>
-</form>
-
-<p><input type="Submit" name="Submit" value="Submit"></p>
-
-
-=======
 <form action="/" method="post" enctype="multipart/form-data">
 	<p>Name : <br> <input type=text name=name></input></p>
 	<p>Info : <br> <textarea rows="4" <input type=textarea name=info></textarea></p>
@@ -29,4 +5,3 @@
 	<p>Preview : <br> <input type=file name=image></input></p>
 	<p><input type="Submit" name="Submit" value="Submit"></p>
 </form>
->>>>>>> fd39d0adf65a6956fd60ee0a157d469ee87ef571
