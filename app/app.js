@@ -114,7 +114,7 @@ Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
     } else {
         return options.inverse(this);
     }
-  });
+});
   
 app.get('/', function(req, res) {
 	$(config.db+".worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page

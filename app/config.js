@@ -1,6 +1,5 @@
 var config = {};
 config.url = "http://localhost";
 config.port = 3000;
-config.db = "WorldManager";
+config.db = "DevWorldManager";
 module.exports = config;
-a="a";
