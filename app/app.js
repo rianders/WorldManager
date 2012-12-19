@@ -152,7 +152,7 @@ app.get('/builds/:id', function(req,res) {
 
 app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
-	{		
+	{	
 		var extension = path.extname(req.files.build.name);																		
 		if(extension == ".unity3d") {
 			newWorld = req.body;
@@ -160,6 +160,7 @@ app.post('/', function(req, res, next){
 			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;												
 			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;																			
 			newWorld.href = "/builds/"+newWorld.id;
+			newWorld.user = req.user;
 			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
 			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
 			
@@ -222,6 +223,19 @@ app.get('/createprofile', function(req, res, next){
 	}
 });
 
+app.get('/myprofile', function(req, res, next){
+	if(req.isAuthenticated())
+	{
+		var formData = req.user;
+		formData.myProfile=true;
+		res.render('root', formData);
+
+	}
+	else
+	{
+		res.redirect('/login');
+	}
+});
 app.get('/:id', function(req, res, next){
 	console.log(req.route)
 	formData={};
