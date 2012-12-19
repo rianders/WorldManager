@@ -1,6 +1,7 @@
 <form action="/" method="post" enctype="multipart/form-data">
-	{{#each form}}
-		<p>{{this.desc}} : <br> <input type={{this.type}} name={{this.name}} info={{this.info}}></input></p>
-	{{/each}}
+	<p>Name : <br> <input type=text name=name></input></p>
+	<p>Info : <br> <textarea rows="4" <input type=textarea name=info></textarea></p>
+	<p>Build : <br> <input type=file name=build></input></p>
+	<p>Preview : <br> <input type=file name=image></input></p>
 	<p><input type="Submit" name="Submit" value="Submit"></p>
 </form>
