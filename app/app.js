@@ -1,12 +1,3 @@
-/*
- To use this file:
- npm install express
- npm install request
- npm install handlebars
- npm install mongoose
- npm install fs
- npm install mongous
-*/
 var express = require('express')
   , util = require('util')
   , cons = require('consolidate')
@@ -73,9 +64,9 @@ fs.readdir(partialsDir, function(err, files) {
 		filename=files[filename];
 //check that the file is a handlebars file
      		var filetype = path.extname(filename);
-     		console.log("registering file: " + filename);
+			console.log("registering file: " + filename);
      if (filetype==".hbs") {
-		  var name = path.basename(filename, filetype);
+		  var name = path.basename(filename, filetype);	
 		  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
 		  console.log(name);
 		  Handlebars.registerPartial(name, template);
@@ -157,32 +148,33 @@ app.get('/builds/:id', function(req,res) {
 
 app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
-	{
-		console.log("Received new world!");
-		var extension = path.extname(req.files.build.name);
+	{		
+		var extension = path.extname(req.files.build.name);																		
 		if(extension == ".unity3d") {
-			console.log(req.body);
-			console.log("End of body");
 			newWorld = req.body;
 			newWorld.id = path.basename(req.files.build.path);
-			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
-			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;
+			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;												
+			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;																			
 			newWorld.href = "/builds/"+newWorld.id;
-			newWorld.user = req.user;
 			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
 			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
+			
 			fs.readFile(req.files.build.path, function(err, data) {
-				fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {
+				
+				fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {		
+					
 					if(err) throw err;
 					res.redirect("/");
 				});
 			});
 			fs.readFile(req.files.image.path, function(err, data) {
-				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {
+				
+				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {		
+					
 					if(err) throw err;
 				});
-			});
-			$(config.db+".worlds").save(newWorld);
+			});	
+			$(config.db+".worlds").save(newWorld)
 		}
 	}
 	else
@@ -204,13 +196,17 @@ if(req.isAuthenticated())
 {
 	var formData = {};
 	formData.upload=true;
-	formData.form=[{desc:"Build", type: "file", name:"build"}, {desc:"Preview", type: "file", name:"image"}];
 	res.render('root', formData);
 }
 else
 {
 	res.redirect('/login');
 }
+});
+
+
+app.get('/contact', function(req, res, next){
+	res.redirect('http://rutgers-virtual-worlds.tenderapp.com/');
 });
 
 app.get('/createprofile', function(req, res, next){

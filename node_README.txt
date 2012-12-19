@@ -12,3 +12,12 @@ type "node expressExample.js"
 
 Now in a browser go to localhost:3000
 It will display Hello World
+
+
+to use this app you must install the following through using npm if they aren't installed already
+ npm install express
+ npm install request
+ npm install handlebars
+ npm install mongoose
+ npm install fs
+ npm install mongous
