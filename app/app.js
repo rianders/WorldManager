@@ -208,10 +208,6 @@ app.get('/upload', function(req, res, next){
 	}
 });
 
-app.get('/contact', function(req, res, next){
-	res.redirect('http://rutgers-virtual-worlds.tenderapp.com/');
-});
-
 app.get('/createprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
