@@ -16,3 +16,6 @@ Temp
 *.csproj
 *.pidb
 *.sln 
+app/config.js
+app/static/builds/*
+app/static/img/*
