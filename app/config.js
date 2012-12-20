@@ -1,5 +1,5 @@
 var config = {};
-config.url = "http://localhost";
-config.port = 3000;
-config.db = "DevWorldManager";
+config.url = "http://rugrid.rutgers.edu";
+config.port = 3003;
+config.db = "WorldManagerZach";
 module.exports = config;

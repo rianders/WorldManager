@@ -1,5 +1,5 @@
 <header>
-	<h1>fname's Profile</h1>
+	<h1>{{user.displayName}}'s Profile</h1>
 </header>
 
 <body>
@@ -7,13 +7,15 @@
 	<a class="btn btn-link btn-large" href="/createprofile">Edit Profile</a>
 	<a class="btn btn-link btn-large" href="/myworlds">View Profile</a>
 	<br><br>
-	First Name:
+	First Name: {{user.name.givenName}}
 	<br>
-	Last Name:
+	Last Name: {{user.name.familyName}}
 	<br>
-	E-Mail:
+	{{#each user.emails}}
+	E-Mail: {{this.value}}
 	<br>
-	Profile Picture:
+	{{/each}}
+	Profile Picture: 
 	<br>
 	Website:
 	<br><br><br><br>

@@ -149,8 +149,8 @@
 			<div class = "row-fluid">
 				<div class = "offset3">
 					<a class ="btn btn-large btn-danger {{#if home}} active {{/if}}" href="/">Home</a>
-					<a class="btn btn-large btn-danger {{#compare path "myworlds"}} active {{/compare}}" href="/myworlds">My Worlds</a>
-					<a class="btn btn-large btn-danger {{#compare path "myprofile"}} active {{/compare}}" href="/myprofile">My Profile</a>
+					<a class="btn btn-large btn-danger {{#if myworlds}} active {{/if}} {{#if editworld}} active {{/if}}" href="/myworlds">My Worlds</a>
+					<a class="btn btn-large btn-danger {{#if myProfile}} active {{/if}}" href="/myprofile">My Profile</a>
 					<a class="btn btn-large btn-danger {{#compare path "createworld"}} active {{/compare}}" href="/createworld">Create World</a>
 					<a class="btn btn-large btn-danger {{#if upload}} active {{/if}}" href="/upload">Upload</a>
 					<a class="btn btn-large btn-danger {{#compare path "about"}} active {{/compare}}" href="/about">About</a>
@@ -231,7 +231,7 @@
 					{{#if myworlds}}
 						{{> myworlds}}
 					{{/if}}
-					{{#if myprofile}}
+					{{#if myProfile}}
 						{{> myprofile}}
 					{{/if}}
 					{{#if createworld}}
@@ -242,6 +242,12 @@
 					{{/if}}
 					{{#if createprofile}}
 						{{> createprofile}}
+					{{/if}}
+					{{#if myprofile}}
+						{{> myprofile}}
+					{{/if}}
+					{{#if editworld}}
+						{{> editworld}}
 					{{/if}}
 					{{#if path}}
 						{{#embed path}}{{/embed}}

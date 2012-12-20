@@ -226,8 +226,10 @@ app.get('/createprofile', function(req, res, next){
 app.get('/myprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
-		var formData = req.user;
+		var formData = {};
+		formData.user = req.user;
 		formData.myProfile=true;
+		console.log(formData);
 		res.render('root', formData);
 
 	}
@@ -236,6 +238,56 @@ app.get('/myprofile', function(req, res, next){
 		res.redirect('/login');
 	}
 });
+
+app.get('/myworlds', function(req, res, next){
+	if(req.isAuthenticated())
+	{
+		console.log("USEr");
+		console.log(req.user);
+		$(config.db+".worlds").find({"user" : req.user}, function(r) {
+			var previews = {};
+			console.log("FOUND MEEE");
+			previews.preview=r.documents;
+			previews.myworlds=true;
+			console.log(previews);
+			res.render('root', previews);
+		});
+	}
+	else
+	{
+		res.redirect('/login');
+	}
+});
+app.get('/editworld/:id', function(req, res, next){
+	if(req.isAuthenticated())
+	{
+		var query = {};
+		query.id = req.route.params.id;
+		query.user = req.user;
+		$(config.db+".worlds").find(query, function(r) {
+			var previews ={};
+			previews.preview = r.documents[0];
+			previews.editworld=true;
+			console.log(previews);
+			res.render('root', previews);
+		});
+	}
+	else
+	{
+		res.redirect('/login');
+	}
+});
+app.post('/edit/:id', function(req, res, next){
+	if(!req.isAuthenticated())
+	{
+		return;
+	}
+	var query = {};
+	query.id = req.route.params.id;
+	query.user = req.user;
+	$(config.db+'.worlds').update(query, {$set : req.params});
+});
+
 app.get('/:id', function(req, res, next){
 	console.log(req.route)
 	formData={};
