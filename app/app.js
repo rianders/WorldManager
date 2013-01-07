@@ -35,6 +35,25 @@ function(identifier, profile, done) {
 	});
 }));
 
+deleteFolderRecursive = function(path) {
+    var files = [];
+    console.log(path);
+    if( fs.existsSync(path) ) {
+        console.log("Deleting");
+	console.log(path);
+	files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+
 app.configure('development', function () {
 	app.use(express.logger());
 	app.use(express.errorHandler({
@@ -135,11 +154,10 @@ app.get('/builds/:id', function(req,res) {
 	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 		var world = {};
 		world.world=r.documents[0];
-		console.log(world);
 		if(req.isAuthenticated())
 		{
 			world.isNotAuthenticated=true;
-			if(req.user==world.user)
+			if(req.user.identifier==world.user.identifier)
 			{
 				console.log("This is my world!");
 				world.isMine=true;
@@ -185,17 +203,33 @@ app.post('/', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/auth/google', passport.authenticate('google', { failureRedirect: '/login' }));
 
-app.get('/auth/google/return', 
-  passport.authenticate('google', { successRedirect: '/',
-                                    failureRedirect: '/' }),   function(req, res) {
-    res.redirect('/');
-  });
-  
+app.get('/auth/google/return', function(req, res, next){
+  passport.authenticate('google', function(err, user, info){
+    // This is the default destination upon successful login.
+    var redirectUrl = '/login';
+
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/'); }
+
+    // If we have previously stored a redirectUrl, use that, 
+    // otherwise, use the default.
+    if (req.session.redirectUrl) {
+      redirectUrl = req.session.redirectUrl;
+      req.session.redirectUrl = null;
+    }
+    req.logIn(user, function(err){
+      if (err) { return next(err); }
+    });
+    res.redirect(redirectUrl);
+  })(req, res, next);
+});
+
 app.get('/upload', function(req, res, next){
 	if(req.isAuthenticated())
 	{
@@ -206,6 +240,7 @@ app.get('/upload', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 
@@ -220,6 +255,7 @@ app.get('/createprofile', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 
@@ -236,26 +272,24 @@ app.get('/myprofile', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/myworlds', function(req, res, next){
 	if(req.isAuthenticated())
 	{
-		console.log("USEr");
-		console.log(req.user);
 		$(config.db+".worlds").find({"user" : req.user}, function(r) {
 			var previews = {};
-			console.log("FOUND MEEE");
 			previews.preview=r.documents;
 			previews.myworlds=true;
-			console.log(previews);
 			res.render('root', previews);
 		});
 	}
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 app.get('/editworld/:id', function(req, res, next){
@@ -268,13 +302,13 @@ app.get('/editworld/:id', function(req, res, next){
 			var previews ={};
 			previews.preview = r.documents[0];
 			previews.editworld=true;
-			console.log(previews);
 			res.render('root', previews);
 		});
 	}
 	else
 	{
 		res.redirect('/login');
+		req.session.redirectUrl=req.url;;
 	}
 });
 app.post('/edit/:id', function(req, res, next){
@@ -289,16 +323,31 @@ app.post('/edit/:id', function(req, res, next){
 });
 
 app.get('/:id', function(req, res, next){
-	console.log(req.route)
 	formData={};
 	formData.path=req.route.params.id;
 	if(!req.isAuthenticated())
 	{
 		formData.isNotAuthenticated=true;
 	}
-	console.log(formData);
 	res.render('root', formData);
 });
+
+app.get('/deleteworld/:id', function(req, res, next){
+	if(!req.isAuthenticated())
+	{
+		return;
+	}
+	var query = {};
+	query.id = req.route.params.id;
+	query.user = req.user;
+	$(config.db+'.worlds').find(query, function(r) {
+		deleteFolderRecursive(__dirname+'/static/builds/'+r.documents[0].id);
+		deleteFolderRecursive(__dirname+'/static/img/'+r.documents[0].id);
+	});
+	$(config.db+'.worlds').remove(query);
+	res.redirect('/myworlds');
+});
+
 
 var port = config.port;
 console.log("WorldManager now listening on port:" + port);
