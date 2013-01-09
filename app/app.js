@@ -30,8 +30,19 @@ function(identifier, profile, done) {
 		// represent the logged-in user.  In a typical application, you would want
 		// to associate the Google account with a user record in your database,
 		// and return that user instead.
-		profile.identifier = identifier;
-		return done(null, profile);
+		$(config.db+".users").find({"identifier" : identifier}, function(r) {
+			if(r.documents.length!=0)
+			{
+				profile = r.documents[0];
+				return done(null, profile);
+			}
+			else
+			{
+				profile.identifier = identifier;
+				$(config.db+".users").save(profile);
+				return done(null, profile);
+			}
+		});
 	});
 }));
 
@@ -156,8 +167,7 @@ app.get('/builds/:id', function(req,res) {
 		world.world=r.documents[0];
 		if(req.isAuthenticated())
 		{
-			world.isNotAuthenticated=true;
-			if(req.user.identifier==world.user.identifier)
+			if(req.user.identifier==world.world.user)
 			{
 				console.log("This is my world!");
 				world.isMine=true;
@@ -178,7 +188,7 @@ app.post('/', function(req, res, next){
 			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;												
 			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;																			
 			newWorld.href = "/builds/"+newWorld.id;
-			newWorld.user = req.user;
+			newWorld.user = req.user.identifier;
 			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
 			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
 			
@@ -279,7 +289,7 @@ app.get('/myprofile', function(req, res, next){
 app.get('/myworlds', function(req, res, next){
 	if(req.isAuthenticated())
 	{
-		$(config.db+".worlds").find({"user" : req.user}, function(r) {
+		$(config.db+".worlds").find({"user" : req.user.identifier}, function(r) {
 			var previews = {};
 			previews.preview=r.documents;
 			previews.myworlds=true;
