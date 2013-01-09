@@ -26,17 +26,13 @@ passport.use(new GoogleStrategy({
 
 function(identifier, profile, done) {
 	process.nextTick(function () {
-		// To keep the example simple, the user's Google profile is returned to
-		// represent the logged-in user.  In a typical application, you would want
-		// to associate the Google account with a user record in your database,
-		// and return that user instead.
 		$(config.db+".users").find({"identifier" : identifier}, function(r) {
-			if(r.documents.length!=0)
+			if(r.documents.length!=0) //if the user is alraedy in the db, just return the user
 			{
 				profile = r.documents[0];
 				return done(null, profile);
 			}
-			else
+			else //otherwise create a new user to add to the db and return the new user
 			{
 				profile.identifier = identifier;
 				$(config.db+".users").save(profile);
@@ -48,10 +44,7 @@ function(identifier, profile, done) {
 
 deleteFolderRecursive = function(path) {
     var files = [];
-    console.log(path);
     if( fs.existsSync(path) ) {
-        console.log("Deleting");
-	console.log(path);
 	files = fs.readdirSync(path);
         files.forEach(function(file,index){
             var curPath = path + "/" + file;
@@ -259,7 +252,7 @@ app.get('/createprofile', function(req, res, next){
 	{
 		var formData = {};
 		formData.createprofile=true;
-		formData.form=[{desc:"Profile Picture", type: "file", name:"image"}];
+		formData.user = req.user;
 		res.render('root', formData);
 	}
 	else
