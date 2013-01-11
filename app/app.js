@@ -247,12 +247,14 @@ app.get('/upload', function(req, res, next){
 	}
 });
 
-app.get('/createprofile', function(req, res, next){
+app.get('/editprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.createprofile=true;
-		formData.user = req.user;
+		formData.editprofile=true;
+		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
+			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
+		});
 		res.render('root', formData);
 	}
 	else
@@ -266,7 +268,9 @@ app.get('/myprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.user = req.user;
+		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
+			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
+		});
 		formData.myProfile=true;
 		console.log(formData);
 		res.render('root', formData);
@@ -300,7 +304,7 @@ app.get('/editworld/:id', function(req, res, next){
 	{
 		var query = {};
 		query.id = req.route.params.id;
-		query.user = req.user;
+		query.user = req.user.identifier;
 		$(config.db+".worlds").find(query, function(r) {
 			var previews ={};
 			previews.preview = r.documents[0];
@@ -321,10 +325,10 @@ app.post('/edit/:id', function(req, res, next){
 	}
 	var query = {};
 	query.id = req.route.params.id;
-	query.user = req.user;
+	query.user = req.user.identifier;
 	$(config.db+'.worlds').update(query, {$set : req.params});
 });
-
+//generic handler for static handlebars pages
 app.get('/:id', function(req, res, next){
 	formData={};
 	formData.path=req.route.params.id;
@@ -342,7 +346,7 @@ app.get('/deleteworld/:id', function(req, res, next){
 	}
 	var query = {};
 	query.id = req.route.params.id;
-	query.user = req.user;
+	query.user = req.user.identifier;
 	$(config.db+'.worlds').find(query, function(r) {
 		deleteFolderRecursive(__dirname+'/static/builds/'+r.documents[0].id);
 		deleteFolderRecursive(__dirname+'/static/img/'+r.documents[0].id);
@@ -351,7 +355,24 @@ app.get('/deleteworld/:id', function(req, res, next){
 	res.redirect('/myworlds');
 });
 
-
+app.post('/editprofile', function(req, res, next){
+	if(!req.isAuthenticated())
+	{
+		res.redirect('/login');
+		return;
+	}
+	var query = {};
+	query.identifier = req.user.identifier;
+	query.name= {};
+	query.name.givenName=req.body.givenName;
+	query.name.familyName=req.body.familyName;
+	query.isPublic=req.body.isPublic;
+	query.displayName=req.body.displayName;
+	query.emails=[];
+	query.emails[0]={"value" :req.body.email};
+	$(config.db+'.users').update({"identifier":req.user.identifier}, {$set : query });
+	res.redirect('/myprofile');
+});
 var port = config.port;
 console.log("WorldManager now listening on port:" + port);
 

@@ -1,0 +1,21 @@
+<form action="/editprofile" method="post" enctype="multipart/formdata">
+    <legend>Edit Profile</legend>
+    <label>Display Name</label>
+    <input type="text" placeholder={{user.displayName}} name="displayName">
+    <label>First Name</label>
+    <input type="text" placeholder={{user.name.givenName}} name="givenName">
+	<label>Last Name</label>
+    <input type="text" placeholder={{user.name.familyName}}  name="familyName">
+	{{#each user.emails}}
+	<label>E-mail</label>
+    <input type="text" placeholder={{this.value}}  name="email">
+	{{/each}}
+	<label>Website</label>
+    <input type="text" name="website" placeholder={{user.website}}>
+ 	<label>Profile Picture:</label>
+    <input type="file" name="image">
+    <label class="checkbox">
+      <input type="checkbox" {{#if user.isPublic}}checked="checked"{{/if}} name="isPublic"> Do you want to allow people to view your profile?
+    </label>
+    <input type="submit" value="Create Profile"></input>
+</form>

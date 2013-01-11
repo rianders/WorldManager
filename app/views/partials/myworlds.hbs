@@ -1,4 +1,7 @@
 <ul class="thumbnails">
+{{#unless preview}}
+<p>It looks like you don't have any worlds!</p>
+{{/unless}}
 {{#each preview}} 
 	<li class="span3">
 		<a href={{this.href}} class="thumbnail"><img src={{this.img}} alt={{this.name}}/></a>
