@@ -26,7 +26,19 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	  
     <![endif]-->
-	
+  <script type="text/javascript">
+  $(".btn-group").click(function() {
+  if($(this).attr("class")=="btn-group")
+  {
+	$(this).attr('class', 'btn-group open');
+  }
+  else
+  {
+	$(this).attr('class', 'btn-group');
+  }
+  });
+
+  </script>	
 
 	
   </head>
@@ -95,50 +107,70 @@
 					<div class="masthead clearfix">
 						<nav class="grid-inner primary-menu" role="navigation">
 							<ul class="menu">
-							<li class="expanded active-trail"><a href="http://onlinelearning.rutgers.edu/" class="active-trail">Ctr for Online Learning <span class="caret"></span></a>
-									<ul class="menu">
-										<li class="first leaf"><a href="http://onlinelearning.rutgers.edu/online-courses-rutgers">Online Courses at Rutgers</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/ecollege">Pearson eCollege</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/edmedia">Educational Media</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/facultytraining">Faculty Resources & Training</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/virtualworlds">Virtual Worlds</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/journal">Newsletter</a></li>
-										<li class="last leaf"><a href="http://onlinelearning.rutgers.edu/about-us">About Us</a></li>
+							<li class="expanded active-trail">
+								<div class="btn-group">
+									<button class="btn dropdown-toggle" data-toggle="dropdown">Button</button>
+									<ul class="dropdown-menu">
+										<li><a href="http://onlinelearning.rutgers.edu/" class="active-trail">Ctr for Online Learning <span class="caret"></span></a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/online-courses-rutgers">Online Courses at Rutgers</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege">Pearson eCollege</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/edmedia">Educational Media</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/facultytraining">Faculty Resources & Training</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/virtualworlds">Virtual Worlds</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/journal">Newsletter</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/about-us">About Us</a></li>
 									</ul>
-								</li>
-								<li class="expanded active-trail"><a href="http://onlinelearning.rutgers.edu/ecollege" class="active-trail">eCollege <span class="caret"></span></a>
-									<ul class="menu">
-										<li class="first leaf"><a href="http://onlinelearning.rutgers.edu/ecollege-student-login">Student Login</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/ecollege-instructor-login">Instructor Login</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/online-courses-rutgers">Online Courses at Rutgers</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/facultytraining">Faculty Resources & Training</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/student-resources">Student Resources</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/technical-requirements">Technical Requirements</a></li>
-										<li class="last leaf"><a href="http://onlinelearning.rutgers.edu/ecollege-help">Helpdesk</a></li>
+								</div>
+							</li>
+							<li class="expanded active-trail">
+								<div class="btn-group">
+									<button class="btn dropdown-toggle" data-toggle="dropdown">Button</button>
+									<ul class="dropdown-menu">
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege" class="active-trail">eCollege <span class="caret"></span></a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege-student-login">Student Login</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege-instructor-login">Instructor Login</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/online-courses-rutgers">Online Courses at Rutgers</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/facultytraining">Faculty Resources & Training</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/student-resources">Student Resources</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/technical-requirements">Technical Requirements</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege-help">Helpdesk</a></li>
 									</ul>
-								</li>
-								<li class="expanded active-trail"><a href="http://onlinelearning.rutgers.edu/facultytraining" class="active-trail">Faculty Resources & Training <span class="caret"></span></a>
-									<ul class="menu">
-										<li class="first leaf"><a href="http://onlinelearning.rutgers.edu/faculty-training-workshops">Instructor Led Workshops</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/faculty-training-webinars">Faculty Training Webinars</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/faculty-training-resources">Faculty Training Resources</a></li>
-										<li class="last leaf"><a href="http://onlinelearning.rutgers.edu/contact-us">One-on-One Help/Contact Us</a></li>
+								</div>
+							</li>
+							<li class="expanded active-trail">
+								<div class="btn-group">
+									<button class="btn dropdown-toggle" data-toggle="dropdown">Button</button>
+									<ul class="dropdown-menu">
+										<li><a href="http://onlinelearning.rutgers.edu/facultytraining" class="active-trail">Faculty Resources & Training <span class="caret"></span></a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/faculty-training-workshops">Instructor Led Workshops</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/faculty-training-webinars">Faculty Training Webinars</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/faculty-training-resources">Faculty Training Resources</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/contact-us">One-on-One Help/Contact Us</a></li>
 									</ul>
-								</li>
-								<li class="expanded active-trail"><a href="http://onlinelearning.rutgers.edu/edmedia" class="active-trail">Educational Media <span class="caret"></span></a>
-									<ul class="menu">
-										<li class="first leaf"><a href="http://onlinelearning.rutgers.edu/video-streaming">Video Streaming</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/web-conferencing">Web Conferencing</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/video-conferencing">Video Conferencing</a></li>
-										<li class="last leaf"><a href="http://onlinelearning.rutgers.edu/ecollege">Lecture Capture</a></li>
+								</div>
+							</li>
+							<li class="expanded active-trail">
+								<div class="btn-group">
+									<button class="btn dropdown-toggle" data-toggle="dropdown">Button</button>
+									<ul class="dropdown-menu">
+										<li><a href="http://onlinelearning.rutgers.edu/edmedia" class="active-trail">Educational Media <span class="caret"></span></a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/video-streaming">Video Streaming</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/web-conferencing">Web Conferencing</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/video-conferencing">Video Conferencing</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/ecollege">Lecture Capture</a></li>
 									</ul>
-								</li>
-								<li class="expanded active-trail"><a href="http://onlinelearning.rutgers.edu/virtualworlds" class="active-trail">Virtual Worlds <span class="caret"></span></a>
-									<ul class="menu">
-										<li class="first leaf"><a href="http://onlinelearning.rutgers.edu/about-virtualworlds">About Virtual Worlds</a></li>
-										<li class="leaf"><a href="http://onlinelearning.rutgers.edu/virtualworlds-support">Support</a></li>
-										<li class="last leaf"><a href="http://onlinelearning.rutgers.edu/virtual-office">Virtual Office</a></li>
+								</div>
+							</li>
+							<li class="expanded active-trail">
+								<div class="btn-group">
+									<button  class="btn dropdown-toggle" data-toggle=dropdown">Button</button>
+									<ul class="dropdown-menu">
+										<li><a href="http://onlinelearning.rutgers.edu/virtualworlds" class="active-trail">Virtual Worlds <span class="caret"></span></a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/about-virtualworlds">About Virtual Worlds</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/virtualworlds-support">Support</a></li>
+										<li><a href="http://onlinelearning.rutgers.edu/virtual-office">Virtual Office</a></li>
 									</ul>
+								</div>
 								</li>
 							</ul>        
 						</nav>
@@ -240,8 +272,8 @@
 					{{#if login}}
 						{{> login}}
 					{{/if}}
-					{{#if editprofile}}
-						{{> editprofile}}
+					{{#if createprofile}}
+						{{> createprofile}}
 					{{/if}}
 					{{#if myprofile}}
 						{{> myprofile}}
