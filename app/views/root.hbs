@@ -37,6 +37,18 @@
 	$(this).attr('class', 'btn-group');
   }
   });
+  
+  $(".dropdown-menu").click(function(){
+  if($(this).attr("class")=="dropdown-menu")
+  {
+       $(this).attr('class', 'dropdown');
+  }
+  else
+  {
+       $(this).attr('class', 'dropdown-menu');
+  }
+  });
+  
 
   </script>	
 
@@ -122,9 +134,9 @@
 									</ul>
 								</div>
 							</li>
-							<li class="expanded active-trail">
+							<li>
 								<div class="btn-group">
-									<button class="btn dropdown-toggle" data-toggle="dropdown">eCollege<span class="caret"></span></button>
+									<button data-toggle="dropdown">eCollege<span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="http://onlinelearning.rutgers.edu/ecollege" class="active-trail">eCollege </a></li>
 										<li><a href="http://onlinelearning.rutgers.edu/ecollege-student-login">Student Login</a></li>
@@ -137,9 +149,9 @@
 									</ul>
 								</div>
 							</li>
-							<li class="expanded active-trail">
+							<li>
 								<div class="btn-group">
-									<button class="btn dropdown-toggle" data-toggle="dropdown">Faculty Training<span class="caret"></span></button>
+									<button data-toggle="dropdown">Faculty Training<span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="http://onlinelearning.rutgers.edu/facultytraining" class="active-trail">Faculty Resources & Training </a></li>
 										<li><a href="http://onlinelearning.rutgers.edu/faculty-training-workshops">Instructor Led Workshops</a></li>
@@ -149,9 +161,9 @@
 									</ul>
 								</div>
 							</li>
-							<li class="expanded active-trail">
+							<li>
 								<div class="btn-group">
-									<button class="btn dropdown-toggle" data-toggle="dropdown">Educational Media<span class="caret"></span></button>
+									<button data-toggle="dropdown">Educational Media<span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="http://onlinelearning.rutgers.edu/edmedia" class="active-trail">Educational Media </a></li>
 										<li><a href="http://onlinelearning.rutgers.edu/video-streaming">Video Streaming</a></li>
@@ -163,9 +175,9 @@
 							</li>
 							
 
-							<li class="expanded active-trail">
+							<li>
 								<div class="btn-group">
-									<button  class="btn dropdown-toggle" data-toggle=dropdown">Virtual Worlds<span class="caret"></span></button>
+									<button data-toggle=dropdown">Virtual Worlds<span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<li><a href="http://onlinelearning.rutgers.edu/virtualworlds" class="active-trail">Virtual Worlds </a></li>
 										<li><a href="http://onlinelearning.rutgers.edu/about-virtualworlds">About Virtual Worlds</a></li>
