@@ -254,8 +254,8 @@ app.get('/editprofile', function(req, res, next){
 		formData.editprofile=true;
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
+			res.render('root', formData);
 		});
-		res.render('root', formData);
 	}
 	else
 	{
@@ -270,11 +270,9 @@ app.get('/myprofile', function(req, res, next){
 		var formData = {};
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
+			formData.myProfile=true;
+			res.render('root', formData);
 		});
-		formData.myProfile=true;
-		console.log(formData);
-		res.render('root', formData);
-
 	}
 	else
 	{
