@@ -9,8 +9,15 @@ var express = require('express')
   , passport = require('passport')
   , GoogleStrategy = require('passport-google').Strategy
   , path = require('path')
-  , config = require('./config');
+  , config = require('./config')
+  , net = require('net')
+  , messenger = require('messenger')
+  , MongoStore = require('connect-mongo')(express)
+  , sessionStore = new MongoStore({db: "Session"})
+  , crc32 = require('buffer-crc32')
+  , crypto = require('crypto');
 
+var secret = 'keyboard cat';
 passport.serializeUser(function(user, done) {
 	done(null, user);
 });
@@ -42,6 +49,8 @@ function(identifier, profile, done) {
 	});
 }));
 
+var client = messenger.createSpeaker(3006);
+var server = messenger.createListener(3005);
 deleteFolderRecursive = function(path) {
     var files = [];
     if( fs.existsSync(path) ) {
@@ -59,7 +68,7 @@ deleteFolderRecursive = function(path) {
 };
 
 app.configure('development', function () {
-	app.use(express.logger());
+	app.use(express.logger("dev"));
 	app.use(express.errorHandler({
 		dumpExceptions: true,
 		showStack: true
@@ -74,7 +83,7 @@ app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
-app.use(express.session({ secret: 'keyboard cat' }));
+app.use(express.session({ secret: secret, store : sessionStore, cookie: { path: '/', httpOnly: false, maxAge: 14400000 }}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
@@ -378,5 +387,31 @@ app.post('/editprofile', function(req, res, next){
 });
 var port = config.port;
 console.log("WorldManager now listening on port:" + port);
-
 app.listen(port);
+server.on('Authenticate', function(message, data) {
+	console.log("Got authentication request");
+	sessionStore.get(parseSignedCookie(data, secret), function(err, sess)
+	{
+		if(err) throw err;
+		console.log(sess)
+	});
+});
+parseSignedCookie = function(str, secret){
+  return 0 == str.indexOf('s:')
+    ? unsign(str.slice(2), secret)
+    : str;
+};
+unsign = function(val, secret){
+  var str = val.slice(0, val.lastIndexOf('.'));
+  return sign(str, secret) == val
+    ? str
+    : false;
+};
+sign = function(val, secret){
+  return val + '.' + crypto
+    .createHmac('sha256', secret)
+    .update(val)
+    .digest('base64')
+    .replace(/=+$/, '');
+};
+

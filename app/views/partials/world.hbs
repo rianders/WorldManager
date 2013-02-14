@@ -1,19 +1,21 @@
 
 <a class="btn" href="/editpage">Edit Page</a>
-	
-	<!--
-	function GetUnity() {
-		if (typeof unityObject != "undefined") {
-			return unityObject.getObjectById("unityPlayer");
-		}
-		return null;
-	}
-	if (typeof unityObject != "undefined") {
-		unityObject.embedUnity("unityPlayer", "WebPlayer.unity3d", 600, 450);
-		
-	}
-	-->
-	</script>
+	<script type="text/javascript" src="http://webplayer.unity3d.com/download_webplayer-3.x/3.0/uo/UnityObject.js"/>
+<script type="text/javascript">
+<!--                function GetUnity() {
+                        if (typeof unityObject !== "undefined") {
+                                return unityObject.getObjectById("unityPlayer");
+                        }
+                        return null;
+                }
+                if (typeof unityObject !== "undefined") {
+                        var params = {
+                                disableContextMenu: true
+                        };
+                        unityObject.embedUnity("unityPlayer", "webplayer.unity3d", 800, 500, params);
+                }
+-->
+</script>
 <div id="unityPlayer" style="width: 600px; height: 450px; visibility: visible;">
 	<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.world}}>
 </div>
