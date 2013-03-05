@@ -106,7 +106,6 @@ fs.readdir(partialsDir, function(err, files) {
 Handlebars.registerHelper('embed', function(val, data) {
 	var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
 	output = Handlebars.compile(output);
-	console.log(this);
 	return output(this);;
   });
 
@@ -150,7 +149,7 @@ app.get('/', function(req, res) {
 			previews.isNotAuthenticated=true; //set to true because 
 		}
 		previews.preview=r.documents;
-		previews.home=true;
+		previews.path="/home";
 		console.log(previews);
 		console.log("Loading home page");
 		res.render('root', previews);
@@ -162,6 +161,7 @@ app.get('/builds/:id', function(req,res) {
 	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 		var world = {};
 		world.world=r.documents[0];
+		world.path="world";
 		if(req.isAuthenticated())
 		{
 			if(req.user.identifier==world.world.user)
@@ -171,7 +171,17 @@ app.get('/builds/:id', function(req,res) {
 			}
 			
 		}
-		res.render('root',world);
+		if(!fs.exists(__dirname+"/static/partials"+req.route.params.id)) //world page has not been edited, use default
+		{
+			res.render('root',world);
+		}
+		else //load in the custom world page
+		{
+			var source = fs.readFileSync(__dirname+"/static/partials"+req.route.params.id+"build.hbs");
+			var custom = handlebars.compile(source);
+			
+		}
+		
 	});
 });
 
@@ -241,7 +251,7 @@ app.get('/upload', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.upload=true;
+		formData.path="upload";
 		res.render('root', formData);
 	}
 	else
@@ -255,7 +265,7 @@ app.get('/editprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.editprofile=true;
+		formData.path="editprofile";
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
 			res.render('root', formData);
@@ -274,7 +284,7 @@ app.get('/myprofile', function(req, res, next){
 		var formData = {};
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
-			formData.myProfile=true;
+			formData.path="myprofile";
 			res.render('root', formData);
 		});
 	}
@@ -291,7 +301,7 @@ app.get('/myworlds', function(req, res, next){
 		$(config.db+".worlds").find({"user" : req.user.identifier}, function(r) {
 			var previews = {};
 			previews.preview=r.documents;
-			previews.myworlds=true;
+			previews.path="myworlds";
 			res.render('root', previews);
 		});
 	}
@@ -315,7 +325,7 @@ app.get('/editworld/:id', function(req, res, next){
 		$(config.db+".worlds").find(query, function(r) {
 			var previews ={};
 			previews.preview = r.documents[0];
-			previews.editworld=true;
+			previews.path="editworld";
 			res.render('root', previews);
 		});
 	}
