@@ -78,6 +78,7 @@ app.set('view options', {layout:false});
 app.use(express.static(__dirname+'/static'));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
+app.use(express.methodOverride());
 app.use(express.session({ secret: secret, store : sessionStore, cookie: { path: '/', httpOnly: false, maxAge: 14400000 }}));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -104,7 +105,7 @@ fs.readdir(partialsDir, function(err, files) {
 });
 
 Handlebars.registerHelper('embed', function(val, data) {
-	var output =  fs.readFileSync(partialsDir + '/' + val+".hbs", 'utf8');
+	var output =  fs.readFileSync(val, 'utf8');
 	output = Handlebars.compile(output);
 	return output(this);;
   });
@@ -149,9 +150,7 @@ app.get('/', function(req, res) {
 			previews.isNotAuthenticated=true; //set to true because 
 		}
 		previews.preview=r.documents;
-		previews.path="/home";
-		console.log(previews);
-		console.log("Loading home page");
+		previews.path=partialsDir+"/home.hbs";
 		res.render('root', previews);
 	});
 
@@ -159,29 +158,33 @@ app.get('/', function(req, res) {
 
 app.get('/builds/:id', function(req,res) {
 	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-		var world = {};
-		world.world=r.documents[0];
-		world.path="world";
-		if(req.isAuthenticated())
+		if(r.documents.length!=0)
 		{
-			if(req.user.identifier==world.world.user)
+			var world = {};
+			world.world=r.documents[0];
+			if(req.isAuthenticated())
 			{
-				console.log("This is my world!");
-				world.isMine=true;
+				if(req.user.identifier==world.world.user)
+				{
+					world.isMine=true;
+				}
+				
 			}
-			
-		}
-		if(!fs.exists(__dirname+"/static/partials"+req.route.params.id)) //world page has not been edited, use default
-		{
+			if(!fs.existsSync(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs")) //world page has not been edited, use default
+			{
+				world.path=partialsDir+"/world.hbs";
+			}
+			else //load in the custom world page
+			{
+				world.path=__dirname+"/static/partials/"+req.route.params.id+"/world.hbs";	
+			}
+			world.identifier = req.route.params.id;
 			res.render('root',world);
 		}
-		else //load in the custom world page
+		else
 		{
-			var source = fs.readFileSync(__dirname+"/static/partials"+req.route.params.id+"build.hbs");
-			var custom = handlebars.compile(source);
-			
+			res.send(404);
 		}
-		
 	});
 });
 
@@ -251,7 +254,7 @@ app.get('/upload', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.path="upload";
+		formData.path=partialsDir+"/upload.hbs";
 		res.render('root', formData);
 	}
 	else
@@ -265,7 +268,7 @@ app.get('/editprofile', function(req, res, next){
 	if(req.isAuthenticated())
 	{
 		var formData = {};
-		formData.path="editprofile";
+		formData.path=partialsDir+"/editprofile.hbs";
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
 			res.render('root', formData);
@@ -284,7 +287,7 @@ app.get('/myprofile', function(req, res, next){
 		var formData = {};
 		$(config.db+".users").find({"identifier" : req.user.identifier}, function(r) {
 			formData.user = r.documents[0]; //should always find something since we always check that a user is in the db when we check authentication
-			formData.path="myprofile";
+			formData.path=partialsDir+"/myprofile.hbs";
 			res.render('root', formData);
 		});
 	}
@@ -301,7 +304,7 @@ app.get('/myworlds', function(req, res, next){
 		$(config.db+".worlds").find({"user" : req.user.identifier}, function(r) {
 			var previews = {};
 			previews.preview=r.documents;
-			previews.path="myworlds";
+			previews.path=partialsDir+"/myworlds.hbs";
 			res.render('root', previews);
 		});
 	}
@@ -325,7 +328,7 @@ app.get('/editworld/:id', function(req, res, next){
 		$(config.db+".worlds").find(query, function(r) {
 			var previews ={};
 			previews.preview = r.documents[0];
-			previews.path="editworld";
+			previews.path=partialsDir+"/editworld.hbs";
 			res.render('root', previews);
 		});
 	}
@@ -333,6 +336,74 @@ app.get('/editworld/:id', function(req, res, next){
 	{
 		res.redirect('/login');
 		req.session.redirectUrl=req.url;;
+	}
+});
+app.put('/editpage/:id', function(req,res,next){
+	if(req.isAuthenticated())
+	{	
+		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
+			if(req.user.identifier=r.documents[0].user)
+			{
+				fs.exists(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", function(exists)
+				{
+					if(!exists)
+					{
+						//create a new page for them to edit by cloning the default
+						if(!fs.existsSync(__dirname+"/static/partials/"+req.route.params.id))
+						{	
+							//ensure that the directory exists before we add the file to it
+							fs.mkdirSync(__dirname+"/static/partials/"+req.route.params.id);
+						}
+					}
+					fs.writeFile(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", req.body.data);
+				});
+				res.send({status: 'ok'});
+			}
+			else
+			{
+				res.send(403);
+			}
+		});
+	}
+	else
+	{
+		res.send(403);
+	}
+});
+app.get('/editpage/:id', function(req,res, next){
+	if(req.isAuthenticated())
+	{
+		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
+			if(req.user.identifier=r.documents[0].user)
+			{
+				formData={};
+				fs.exists(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", function(exists)
+				{
+					if(!exists)
+					{
+						//create a new page for them to edit by cloning the default
+						if(!fs.existsSync(__dirname+"/static/partials/"+req.route.params.id))
+						{	
+							//ensure that the directory exists before we add the file to it
+							fs.mkdirSync(__dirname+"/static/partials/"+req.route.params.id);
+						}
+						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs"));
+					}
+				});
+				formData.pathToPartial=config.url+":"+config.port+"/partials/"+req.route.params.id+"/world.hbs";
+				formData.path=partialsDir+"/editpage.hbs";
+				formData.identifier=req.route.params.id;
+				res.render('root', formData);
+			}
+			else
+			{
+				res.send(403);
+			}
+		});
+	}
+	else
+	{
+		res.send(403);
 	}
 });
 app.post('/edit/:id', function(req, res, next){
@@ -348,7 +419,7 @@ app.post('/edit/:id', function(req, res, next){
 //generic handler for static handlebars pages
 app.get('/:id', function(req, res, next){
 	formData={};
-	formData.path=req.route.params.id;
+	formData.path=partialsDir+"/"+req.route.params.id+".hbs";
 	if(!req.isAuthenticated())
 	{
 		formData.isNotAuthenticated=true;

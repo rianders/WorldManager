@@ -10,11 +10,24 @@
 </style>
 <div id="editor">
 </div>
-    
-<script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
-<script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/html");
-    editor.setValue();
+<script src="../js/ace.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	var editor = ace.edit("editor");
+	$.get("{{pathToPartial}}", function(partial) {
+		editor.setValue(partial);
+	});
+	editor.setTheme("ace/theme/monokai");
+	editor.getSession().setMode("ace/mode/html");
+	var update = function()
+	{
+		$.ajax({
+		url: window.location.pathname,
+		type: 'PUT',
+		data: {"data":editor.getValue()},
+		success: function(data) {
+		}
+		});
+	}
 </script>
+<button class="btn" onclick="update()">Save</button>
+<a class="btn" href="/builds/{{identifier}}" onclick="update()">Finish</a>

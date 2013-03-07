@@ -257,6 +257,9 @@
 				
 				<div class = "span8">
 					{{#embed path}}{{/embed}}
+					{{#if isMine}}
+						<a class="btn" href="/editpage/{{this.identifier}}">Edit Page</a>
+					{{/if}}
 				</div>
 			</div>
 		</div>	
@@ -265,7 +268,7 @@
 			
 		<footer class="pagination-centered">
 			<div class = "container">
-				<p>Copyright © 2012, Rutgers, The State University of New Jersey, an equal opportunity, affirmative action institution.</p>
+				<p>Copyright © 2013, Rutgers, The State University of New Jersey, an equal opportunity, affirmative action institution.</p>
 			</div>
 		</footer>
 		
