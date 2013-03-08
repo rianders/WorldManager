@@ -187,7 +187,6 @@ app.get('/builds/:id', function(req,res) {
 		}
 	});
 });
-
 app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
 	{	
@@ -223,7 +222,6 @@ app.post('/', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 
@@ -232,7 +230,7 @@ app.get('/auth/google', passport.authenticate('google', { failureRedirect: '/log
 app.get('/auth/google/return', function(req, res, next){
   passport.authenticate('google', function(err, user, info){
     // This is the default destination upon successful login.
-    var redirectUrl = '/login';
+    var redirectUrl = '/';
 
     if (err) { return next(err); }
     if (!user) { return res.redirect('/'); }
@@ -251,6 +249,7 @@ app.get('/auth/google/return', function(req, res, next){
 });
 
 app.get('/upload', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		var formData = {};
@@ -260,11 +259,11 @@ app.get('/upload', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/editprofile', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		var formData = {};
@@ -277,11 +276,11 @@ app.get('/editprofile', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/myprofile', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		var formData = {};
@@ -294,11 +293,11 @@ app.get('/myprofile', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/myworlds', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		$(config.db+".worlds").find({"user" : req.user.identifier}, function(r) {
@@ -311,15 +310,16 @@ app.get('/myworlds', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 
 app.get('/logout', function(req, res , next){
+	req.session.redirectUrl=req.url;
 	req.logout();
 	res.redirect('/');
 });
 app.get('/editworld/:id', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		var query = {};
@@ -335,10 +335,10 @@ app.get('/editworld/:id', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-		req.session.redirectUrl=req.url;;
 	}
 });
 app.put('/editpage/:id', function(req,res,next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{	
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
@@ -371,6 +371,7 @@ app.put('/editpage/:id', function(req,res,next){
 	}
 });
 app.get('/editpage/:id', function(req,res, next){
+	req.session.redirectUrl=req.url;
 	if(req.isAuthenticated())
 	{
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
@@ -418,6 +419,10 @@ app.post('/edit/:id', function(req, res, next){
 });
 //generic handler for static handlebars pages
 app.get('/:id', function(req, res, next){
+	if(req.route.params.id!="login")
+	{
+		req.session.redirectUrl=req.url;
+	}
 	formData={};
 	formData.path=partialsDir+"/"+req.route.params.id+".hbs";
 	if(!req.isAuthenticated())
@@ -428,6 +433,7 @@ app.get('/:id', function(req, res, next){
 });
 
 app.get('/deleteworld/:id', function(req, res, next){
+	req.session.redirectUrl=req.url;
 	if(!req.isAuthenticated())
 	{
 		return;
