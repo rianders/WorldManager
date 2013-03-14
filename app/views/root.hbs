@@ -81,10 +81,10 @@
 									<ul class="nav">
 										<li class = "divider-vertical"></li>
 										<li class = "inactive">
-										{{#if isNotAuthenticated}}
-											<a href="/auth/google">Sign In with Google</a>
-										{{else}}
+										{{#if isAuthenticated}}
 											<a href="/logout">Logout</a>
+										{{else}}
+											<a href="/login">Login</a>
 										{{/if}}
 										</li>
 									</ul>

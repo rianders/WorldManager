@@ -1,3 +1,4 @@
+{{#if isAuthenticated}}
 <header>
 	<h1>{{user.displayName}}'s Profile</h1>
 </header>
@@ -20,3 +21,6 @@
 	<br><br><br><br>
 	<a class="btn btn-link btn-mini" href="/deleteprofile">Delete Profile</a>
 </body>
+{{else}}
+{{> login}}
+{{/if}}

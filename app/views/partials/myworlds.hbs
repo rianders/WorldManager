@@ -1,3 +1,4 @@
+{{#if isAuthenticated}}
 <ul class="thumbnails">
 {{#unless preview}}
 <p>It looks like you don't have any worlds!</p>
@@ -14,3 +15,6 @@
 	</li>
 {{/each}}
 </ul>
+{{else}}
+	{{> login}}
+{{/if}}
