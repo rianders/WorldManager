@@ -190,9 +190,9 @@ app.get('/builds/:id', function(req,res) {
 				}
 				
 			}
-			if(fs.existsSync(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs")) //switch to custom hbs if they made one
+			if(fs.existsSync(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs")) //switch to custom hbs if they made one
 			{
-				req.hbs.path=__dirname+"/static/partials/"+req.route.params.id+"/world.hbs";	
+				req.hbs.path=__dirname+"/static/builds/"+req.route.params.id+"/world.hbs";	
 			}
 			req.hbs.identifier = req.route.params.id;
 			res.render('root',req.hbs);
@@ -233,6 +233,10 @@ app.post('/', function(req, res, next){
 				});
 			});	
 			$(config.db+".worlds").save(newWorld)
+		}
+		else
+		{
+			res.send("Invalid data file");
 		}
 	}
 	else
@@ -304,18 +308,18 @@ app.put('/editpage/:id', function(req,res,next){
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 			if(req.user.identifier=r.documents[0].user)
 			{
-				fs.exists(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", function(exists)
+				fs.exists(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
 					if(!exists)
 					{
 						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/static/partials/"+req.route.params.id))
+						if(!fs.existsSync(__dirname+"/static/builds/"+req.route.params.id))
 						{	
 							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/static/partials/"+req.route.params.id);
+							fs.mkdirSync(__dirname+"/static/builds/"+req.route.params.id);
 						}
 					}
-					fs.writeFile(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", req.body.data);
+					fs.writeFile(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", req.body.data);
 				});
 				res.send({status: 'ok'});
 			}
@@ -336,20 +340,20 @@ app.get('/editpage/:id', function(req,res, next){
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 			if(req.user.identifier=r.documents[0].user)
 			{
-				fs.exists(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs", function(exists)
+				fs.exists(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
 					if(!exists)
 					{
 						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/static/partials/"+req.route.params.id))
+						if(!fs.existsSync(__dirname+"/static/builds/"+req.route.params.id))
 						{	
 							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/static/partials/"+req.route.params.id);
+							fs.mkdirSync(__dirname+"/static/builds/"+req.route.params.id);
 						}
-						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/partials/"+req.route.params.id+"/world.hbs"));
+						fs.createReadStream(prtialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs"));
 					}
 				});
-				req.hbs.pathToPartial=config.url+":"+config.port+"/partials/"+req.route.params.id+"/world.hbs";
+				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
 				req.hbs.identifier=req.route.params.id;
 				res.render('root', req.hbs);
 			}
