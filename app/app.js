@@ -228,7 +228,6 @@ app.post('/', function(req, res, next){
 			fs.readFile(req.files.image.path, function(err, data) {
 				
 				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {		
-					
 					if(err) throw err;
 				});
 			});	
@@ -306,7 +305,7 @@ app.put('/editpage/:id', function(req,res,next){
 	if(req.isAuthenticated())
 	{	
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-			if(req.user.identifier=r.documents[0].user)
+			if(req.user.identifier==r.documents[0].user)
 			{
 				fs.exists(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
@@ -322,6 +321,25 @@ app.put('/editpage/:id', function(req,res,next){
 					fs.writeFile(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", req.body.data);
 				});
 				res.send({status: 'ok'});
+			}
+			else
+			{
+				res.send(403);
+			}
+		});
+	}
+	else
+	{
+		res.send(403);
+	}
+});
+app.post('/editpage/:id', function(req,res,next){
+	if(req.isAuthenticated())
+	{
+		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
+			if(req.user.identifier==r.documents[0].user)
+			{
+				
 			}
 			else
 			{
@@ -350,7 +368,7 @@ app.get('/editpage/:id', function(req,res, next){
 							//ensure that the directory exists before we add the file to it
 							fs.mkdirSync(__dirname+"/static/builds/"+req.route.params.id);
 						}
-						fs.createReadStream(prtialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs"));
+						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs"));
 					}
 				});
 				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
@@ -382,10 +400,10 @@ app.post('/edit/:id', function(req, res, next){
 app.get('/:id', function(req, res, next){
 	res.render('root', req.hbs);
 });
-
 app.get('/deleteworld/:id', function(req, res, next){
 	if(!req.isAuthenticated())
 	{
+		res.send(403);
 		return;
 	}
 	var query = {};
