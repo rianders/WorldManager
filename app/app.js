@@ -12,7 +12,8 @@ var express = require('express')
   , config = require('./config')
   , net = require('net')
   , MongoStore = require('connect-mongo')(express)
-  , sessionStore = new MongoStore({db: "Session"});
+  , sessionStore = new MongoStore({db: "Session"})
+  , editor = require('./editor');
 
 
 //simple middleware
@@ -99,6 +100,7 @@ app.set('view engine', 'hbs');
 app.engine('hbs', cons.handlebars);
 app.set('views', __dirname + '/views');
 app.set('view options', {layout:false});
+app.use("/builds", express.static(__dirname+'/builds'));
 app.use(express.static(__dirname+'/static'));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
@@ -107,6 +109,7 @@ app.use(express.session({ secret: secret, store : sessionStore, cookie: { path: 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(defaultHandlebars);
+app.use(editor);
 app.use(app.router);
 
 //handlebars partials and helpers
@@ -190,9 +193,9 @@ app.get('/builds/:id', function(req,res) {
 				}
 				
 			}
-			if(fs.existsSync(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs")) //switch to custom hbs if they made one
+			if(fs.existsSync(__dirname+"/builds/"+req.route.params.id+"/world.hbs")) //switch to custom hbs if they made one
 			{
-				req.hbs.path=__dirname+"/static/builds/"+req.route.params.id+"/world.hbs";	
+				req.hbs.path=__dirname+"/builds/"+req.route.params.id+"/world.hbs";	
 			}
 			req.hbs.identifier = req.route.params.id;
 			res.render('root',req.hbs);
@@ -210,16 +213,16 @@ app.post('/', function(req, res, next){
 		if(extension == ".unity3d") {
 			newWorld = req.body;
 			newWorld.id = path.basename(req.files.build.path);
-			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;												
-			newWorld.img = "/img/"+newWorld.id+"/"+req.files.image.name;																			
+			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
+			newWorld.img = "/builds/"+newWorld.id+"/img/"+req.files.image.name;
 			newWorld.href = "/builds/"+newWorld.id;
 			newWorld.user = req.user.identifier;
-			fs.mkdirSync(__dirname+"/static/img/"+newWorld.id);
-			fs.mkdirSync(__dirname+"/static/builds/"+newWorld.id);
+			fs.mkdirSync(__dirname+"/builds/"+newWorld.id);
+			fs.mkdirSync(__dirname+"/builds/"+newWorld.id+"/img/");
 			
 			fs.readFile(req.files.build.path, function(err, data) {
 				
-				fs.writeFile(__dirname+"/static/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {		
+				fs.writeFile(__dirname+"/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {		
 					
 					if(err) throw err;
 					res.redirect("/");
@@ -227,7 +230,7 @@ app.post('/', function(req, res, next){
 			});
 			fs.readFile(req.files.image.path, function(err, data) {
 				
-				fs.writeFile(__dirname+"/static/img/"+newWorld.id+"/"+req.files.image.name, data, function (err) {		
+				fs.writeFile(__dirname+"/builds/"+newWorld.id+"/img/"+req.files.image.name, data, function (err) {		
 					if(err) throw err;
 				});
 			});	
@@ -307,18 +310,18 @@ app.put('/editpage/:id', function(req,res,next){
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 			if(req.user.identifier==r.documents[0].user)
 			{
-				fs.exists(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", function(exists)
+				fs.exists(__dirname+"/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
 					if(!exists)
 					{
 						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/static/builds/"+req.route.params.id))
+						if(!fs.existsSync(__dirname+"/builds/"+req.route.params.id))
 						{	
 							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/static/builds/"+req.route.params.id);
+							fs.mkdirSync(__dirname+"/builds/"+req.route.params.id);
 						}
 					}
-					fs.writeFile(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", req.body.data);
+					fs.writeFile(__dirname+"/builds/"+req.route.params.id+"/world.hbs", req.body.data);
 				});
 				res.send({status: 'ok'});
 			}
@@ -339,7 +342,7 @@ app.post('/editpage/:id', function(req,res,next){
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 			if(req.user.identifier==r.documents[0].user)
 			{
-				
+				console.log(req.files);
 			}
 			else
 			{
@@ -358,17 +361,17 @@ app.get('/editpage/:id', function(req,res, next){
 		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 			if(req.user.identifier=r.documents[0].user)
 			{
-				fs.exists(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs", function(exists)
+				fs.exists(__dirname+"/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
 					if(!exists)
 					{
 						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/static/builds/"+req.route.params.id))
+						if(!fs.existsSync(__dirname+"/builds/"+req.route.params.id))
 						{	
 							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/static/builds/"+req.route.params.id);
+							fs.mkdirSync(__dirname+"/builds/"+req.route.params.id);
 						}
-						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/static/builds/"+req.route.params.id+"/world.hbs"));
+						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs"));
 					}
 				});
 				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
@@ -410,8 +413,8 @@ app.get('/deleteworld/:id', function(req, res, next){
 	query.id = req.route.params.id;
 	query.user = req.user.identifier;
 	$(config.db+'.worlds').find(query, function(r) {
-		deleteFolderRecursive(__dirname+'/static/builds/'+r.documents[0].id);
-		deleteFolderRecursive(__dirname+'/static/img/'+r.documents[0].id);
+		deleteFolderRecursive(__dirname+'/builds/'+r.documents[0].id);
+		deleteFolderRecursive(__dirname+'/img/'+r.documents[0].id);
 	});
 	$(config.db+'.worlds').remove(query);
 	res.redirect('/myworlds');
