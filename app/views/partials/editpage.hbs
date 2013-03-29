@@ -21,7 +21,7 @@
 	var update = function()
 	{
 		$.ajax({
-		url: window.location.pathname,
+		url: "{{pathToPartial}}",
 		type: 'PUT',
 		data: {"data":editor.getValue()},
 		success: function(data) {

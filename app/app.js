@@ -12,8 +12,7 @@ var express = require('express')
   , config = require('./config')
   , net = require('net')
   , MongoStore = require('connect-mongo')(express)
-  , sessionStore = new MongoStore({db: "Session"})
-  , editor = require('./editor');
+  , sessionStore = new MongoStore({db: "Session"});
 
 
 //simple middleware
@@ -34,9 +33,89 @@ function defaultHandlebars(req, res, next)
 	next();
 }
 
+function editor(req, res, next) {
+	var parsedUrl = req.url.split("/");
+	console.log(parsedUrl);
+	if(parsedUrl[1]=="builds")
+	{
+		if(req.method=="GET")
+		{
+			next();
+		}
+		else if(req.method=="PUT")
+		{
+			if(req.isAuthenticated())
+			{	
+				$(config.db+".worlds").find({id:parsedUrl[2]}, function(r) {
+					if(req.user.identifier==r.documents[0].user)
+					{
+						var directory = req.url.substring(0, req.url.lastIndexOf("/"));
+						createPath(__dirname+directory, function(done)
+						{
+							fs.writeFile(__dirname+req.url, req.body.data);
+						});
+						res.send({status: 'ok'});
+					}
+					else
+					{
+						res.send(403);
+					}
+				});
+			}
+			else
+			{
+				res.send(403);
+			}
+		}
+		else if(req.method=="DEL")
+		{
+			if(req.isAuthenticated())
+			{	
+				$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
+					if(req.user.identifier==r.documents[0].user)
+					{
+						fs.unlink(__dirname+req.url, function(err)
+						{
+							if(err) throw err;
+							res.send({status: 'ok'});
+						});
+					}
+					else
+					{
+						res.send(403);
+					}
+				});
+			}
+			else
+			{
+				res.send(403);
+			}
+		}
+	}
+	else
+	{
+		next();
+	}
+}
 
-
-
+function createPath(path, done)
+{
+	console.log(path)
+	if(fs.existsSync(path))
+	{
+		done();
+	}
+	else
+	{
+		createPath(path.substring(0,path.lastIndexOf("/")), function(err) {
+			fs.mkdir(path, function(err) {
+				if(err) throw err;
+				done();
+			});
+		});
+		
+	}
+}
 
 
 var secret = 'keyboard cat';
@@ -302,38 +381,6 @@ app.get('/editworld/:id', function(req, res, next){
 	else
 	{
 		res.redirect('/login');
-	}
-});
-app.put('/editpage/:id', function(req,res,next){
-	if(req.isAuthenticated())
-	{	
-		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-			if(req.user.identifier==r.documents[0].user)
-			{
-				fs.exists(__dirname+"/builds/"+req.route.params.id+"/world.hbs", function(exists)
-				{
-					if(!exists)
-					{
-						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/builds/"+req.route.params.id))
-						{	
-							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/builds/"+req.route.params.id);
-						}
-					}
-					fs.writeFile(__dirname+"/builds/"+req.route.params.id+"/world.hbs", req.body.data);
-				});
-				res.send({status: 'ok'});
-			}
-			else
-			{
-				res.send(403);
-			}
-		});
-	}
-	else
-	{
-		res.send(403);
 	}
 });
 app.post('/editpage/:id', function(req,res,next){
