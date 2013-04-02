@@ -12,22 +12,43 @@
 </div>
 <script src="../js/ace.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
+	var pathToFile="{{pathToParial}}";
 	var editor = ace.edit("editor");
-	$.get("{{pathToPartial}}", function(partial) {
-		editor.setValue(partial);
-	});
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/html");
 	var update = function()
 	{
 		$.ajax({
-		url: "{{pathToPartial}}",
+		url: pathToFile,
 		type: 'PUT',
 		data: {"data":editor.getValue()},
 		success: function(data) {
 		}
 		});
 	}
+	var setEditor = function(path)
+	{
+		$.get(path, function(partial) {
+			editor.setValue(partial);
+			pathToFile=path;
+		});
+	}
+	var getDir = function(parent,dir)
+	{
+		if(parent.getAttribute("class")!="selected")
+		{
+			$.get(dir, function(newDir) {
+				parent.innerHTML=newDir;
+				parent.setAttribute("class", "selected");
+			});
+		}	
+	}
+	$(document).ready(function() {
+		getDir(document.getElementById("builds{{identifier}}"), "/builds/{{identifier}}");
+		setEditor(pathToFile);
+	});
 </script>
 <button class="btn" onclick="update()">Save</button>
 <a class="btn" href="/builds/{{identifier}}" onclick="update()">Finish</a>
+<ul id="builds{{identifier}}"> 
+</ul>

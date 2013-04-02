@@ -16,6 +16,30 @@ var express = require('express')
 
 
 //simple middleware
+function gendir(path)
+{
+	if(fs.existsSync(__dirname+path))
+	{
+		var dir = fs.readdirSync(__dirname+path);
+		var returnVal = [];
+		for(var i=0; i<dir.length; i++)
+		{
+			var nextVal = {};
+			nextVal.path=path+dir[i];
+			nextVal.name=dir[i];
+			if(fs.statSync(__dirname+path+dir[i]).isDirectory())
+			{
+				nextVal.isDirectory=true;
+			}
+			returnVal.push(nextVal);
+		}
+		return returnVal;
+	}
+	else
+	{
+		return null;
+	}
+}
 
 function defaultHandlebars(req, res, next)
 {
@@ -35,12 +59,21 @@ function defaultHandlebars(req, res, next)
 
 function editor(req, res, next) {
 	var parsedUrl = req.url.split("/");
-	console.log(parsedUrl);
 	if(parsedUrl[1]=="builds")
 	{
 		if(req.method=="GET")
 		{
-			next();
+			if(fs.statSync(__dirname+req.url).isDirectory())
+			{
+				var f = {};
+				f.files=gendir(req.url);
+				res.render("partials/filenav", f);
+			}
+			else
+			{
+				console.log(false);
+				next();
+			}				
 		}
 		else if(req.method=="PUT")
 		{
@@ -100,7 +133,6 @@ function editor(req, res, next) {
 
 function createPath(path, done)
 {
-	console.log(path)
 	if(fs.existsSync(path))
 	{
 		done();
@@ -167,11 +199,16 @@ deleteFolderRecursive = function(path) {
 };
 
 app.configure('development', function () {
+	console.log("Using devlopment version");
 	app.use(express.logger("dev"));
 	app.use(express.errorHandler({
 		dumpExceptions: true,
 		showStack: true
 	}))
+});
+
+app.configure('production', function () {
+	console.log("Using production version");
 });
 
 // set .hbs as the default extension 
@@ -190,7 +227,6 @@ app.use(passport.session());
 app.use(defaultHandlebars);
 app.use(editor);
 app.use(app.router);
-
 //handlebars partials and helpers
 var partialsDir = __dirname + '/views/partials';
 
@@ -212,9 +248,17 @@ fs.readdir(partialsDir, function(err, files) {
 });
 
 Handlebars.registerHelper('embed', function(val, data) {
-	var output =  fs.readFileSync(val, 'utf8');
-	output = Handlebars.compile(output);
-	return output(this);;
+	var output;
+	if(fs.existsSync(val))
+	{
+		output =  fs.readFileSync(val, 'utf8');
+		output = Handlebars.compile(output);
+		return output(this);
+	}
+	else
+	{
+		return fs.readFileSync(__dirname+"/views/partials/404.hbs");
+	}
   });
 
   
@@ -259,7 +303,7 @@ app.get('/', function(req, res) {
 
 });
 
-app.get('/builds/:id', function(req,res) {
+app.get('/world/:id', function(req,res) {
 	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
 		if(r.documents.length!=0)
 		{
@@ -281,7 +325,8 @@ app.get('/builds/:id', function(req,res) {
 		}
 		else
 		{
-			res.send(404);
+			req.hbs.path=partialsDir+'/404.hbs';
+			res.render('root', req.hbs);
 		}
 	});
 });
@@ -294,7 +339,7 @@ app.post('/', function(req, res, next){
 			newWorld.id = path.basename(req.files.build.path);
 			newWorld.world = "/builds/"+newWorld.id+"/"+req.files.build.name;
 			newWorld.img = "/builds/"+newWorld.id+"/img/"+req.files.image.name;
-			newWorld.href = "/builds/"+newWorld.id;
+			newWorld.href = "/world/"+newWorld.id;
 			newWorld.user = req.user.identifier;
 			fs.mkdirSync(__dirname+"/builds/"+newWorld.id);
 			fs.mkdirSync(__dirname+"/builds/"+newWorld.id+"/img/");
