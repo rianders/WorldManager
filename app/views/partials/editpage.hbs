@@ -12,7 +12,7 @@
 </div>
 <script src="../js/ace.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	var pathToFile="{{pathToParial}}";
+	var pathToFile;
 	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/monokai");
 	editor.getSession().setMode("ace/mode/html");
@@ -44,11 +44,12 @@
 		}	
 	}
 	$(document).ready(function() {
+		pathToFile="{{pathToPartial}}"
 		getDir(document.getElementById("builds{{identifier}}"), "/builds/{{identifier}}");
 		setEditor(pathToFile);
 	});
 </script>
 <button class="btn" onclick="update()">Save</button>
-<a class="btn" href="/builds/{{identifier}}" onclick="update()">Finish</a>
+<a class="btn" href="/world/{{identifier}}" onclick="update()">Finish</a>
 <ul id="builds{{identifier}}"> 
 </ul>
