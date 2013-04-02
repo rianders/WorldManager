@@ -185,7 +185,7 @@
 			
 			<div class = "row-fluid">
 				<div class = "offset3">
-					<a class ="btn btn-large btn-danger {{#if home}} active {{/if}}" href="/">Home</a>
+					<a class="btn btn-large btn-danger {{#if home}} active {{/if}}" href="/">Home</a>
 					<a class="btn btn-large btn-danger {{#if myworlds}} active {{/if}} {{#if editworld}} active {{/if}}" href="/myworlds">My Worlds</a>
 					<a class="btn btn-large btn-danger {{#if myProfile}} active {{/if}}" href="/myprofile">My Profile</a>
 					<a class="btn btn-large btn-danger {{#compare path "createworld"}} active {{/compare}}" href="/createworld">Create World</a>
@@ -256,10 +256,10 @@
 				</div>
 				
 				<div class = "span8">
-					{{#embed path}}{{/embed}}
-					{{#if isMine}}
-						<a class="btn" href="/editpage/{{this.identifier}}">Edit Page</a>
-					{{/if}}
+				{{#if isMine}}
+					<a class="btn" href="/editpage/{{this.identifier}}">Edit Page</a>
+				{{/if}}
+				{{#embed path}}{{/embed}}
 				</div>
 			</div>
 		</div>	
