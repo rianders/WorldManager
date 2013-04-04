@@ -1,5 +1,5 @@
-var config = {};
-config.url = "http://rugrid.rutgers.edu";
-config.port = 3003;
-config.db = "WorldManagerZach";
-module.exports = config;
+module.exports = {
+"url" : "http://rugrid.rutgers.edu",
+"port" : 3003,
+"db" : "WorldManagerRyan"
+};
