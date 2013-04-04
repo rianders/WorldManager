@@ -1,4 +1,7 @@
-var fs = require('fs');
+var fs = require('fs'),
+config = require('./config'),
+$ = require('mongous').Mongous;
+
 module.exports = function(req, res, next) {
 	var parsedUrl = req.url.split("/");
 	if(parsedUrl[1]=="builds")
@@ -42,18 +45,25 @@ module.exports = function(req, res, next) {
 					res.send(403);
 				}
 			}
-			else if(req.method=="DEL")
+			else if(req.method=="DELETE")
 			{
 				if(req.isAuthenticated())
 				{	
-					$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
+					$(config.db+".worlds").find({id:parsedUrl[2]}, function(r) {
 						if(req.user.identifier==r.documents[0].user)
 						{
-							fs.unlink(__dirname+req.url, function(err)
+							if(fs.statSync(__dirname+req.url).isDirectory())
 							{
-								if(err) throw err;
-								res.send({status: 'ok'});
-							});
+								deleteFolderRecursive(__dirname+req.url);
+							}
+							else
+							{
+								fs.unlink(__dirname+req.url, function(err)
+								{
+									if(err) throw err;
+									res.send({status: 'ok'});
+								});
+							}
 						}
 						else
 						{
@@ -65,6 +75,10 @@ module.exports = function(req, res, next) {
 				{
 					res.send(403);
 				}
+			}
+			else
+			{
+				next();
 			}
 		}
 		else
@@ -120,3 +134,20 @@ function createPath(path, done)
 		
 	}
 }
+function deleteFolderRecursive(path) {
+    var files = [];
+    if( fs.existsSync(path) ) {
+	files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
+
+

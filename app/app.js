@@ -92,8 +92,8 @@ app.use(express.session({ secret: secret, store : sessionStore, cookie: { path: 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(defaultHandlebars);
-app.use(editor);
 app.use(app.router);
+app.use(editor);
 //handlebars partials and helpers
 var partialsDir = __dirname + '/views/partials';
 
