@@ -121,6 +121,10 @@ function gendir(path)
 
 function createPath(path, done)
 {
+	if(path[path.length-1]=='/')
+	{
+		path=path.substring(0, path.length-1);
+	}
 	if(fs.existsSync(path))
 	{
 		done();

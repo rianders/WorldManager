@@ -50,7 +50,7 @@ function(identifier, profile, done) {
 	});
 }));
 
-deleteFolderRecursive = function(path) {
+function deleteFolderRecursive(path) {
     var files = [];
     if( fs.existsSync(path) ) {
 	files = fs.readdirSync(path);
@@ -66,6 +66,27 @@ deleteFolderRecursive = function(path) {
     }
 };
 
+function createPath(path, done)
+{
+	if(path[path.length-1]=='/')
+	{
+		path=path.substring(0, path.length-1);
+	}
+	if(fs.existsSync(path))
+	{
+		done();
+	}
+	else
+	{
+		createPath(path.substring(0,path.lastIndexOf("/")), function(err) {
+			fs.mkdir(path, function(err) {
+				if(err) throw err;
+				done();
+			});
+		});
+		
+	}
+}
 app.configure('development', function () {
 	console.log("Using devlopment version");
 	app.use(express.logger("dev"));
@@ -209,23 +230,22 @@ app.post('/', function(req, res, next){
 			newWorld.img = "/builds/"+newWorld.id+"/img/"+req.files.image.name;
 			newWorld.href = "/world/"+newWorld.id;
 			newWorld.user = req.user.identifier;
-			fs.mkdirSync(__dirname+"/builds/"+newWorld.id);
-			fs.mkdirSync(__dirname+"/builds/"+newWorld.id+"/img/");
-			
-			fs.readFile(req.files.build.path, function(err, data) {
-				
-				fs.writeFile(__dirname+"/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {		
+			createPath(__dirname+"/builds/"+newWorld.id+"/img/", function(done) {
+				fs.readFile(req.files.build.path, function(err, data) {
 					
-					if(err) throw err;
-					res.redirect("/");
+					fs.writeFile(__dirname+"/builds/"+newWorld.id+"/"+req.files.build.name, data, function (err) {		
+						
+						if(err) throw err;
+						res.redirect("/");
+					});
 				});
+				fs.readFile(req.files.image.path, function(err, data) {
+					
+					fs.writeFile(__dirname+"/builds/"+newWorld.id+"/img/"+req.files.image.name, data, function (err) {		
+						if(err) throw err;
+					});
+				});	
 			});
-			fs.readFile(req.files.image.path, function(err, data) {
-				
-				fs.writeFile(__dirname+"/builds/"+newWorld.id+"/img/"+req.files.image.name, data, function (err) {		
-					if(err) throw err;
-				});
-			});	
 			db.collection('worlds').save(newWorld)
 		}
 		else
@@ -326,13 +346,8 @@ app.get('/editpage/:id', function(req,res, next){
 				{
 					if(!exists)
 					{
-						//create a new page for them to edit by cloning the default
-						if(!fs.existsSync(__dirname+"/builds/"+req.route.params.id))
-						{	
-							//ensure that the directory exists before we add the file to it
-							fs.mkdirSync(__dirname+"/builds/"+req.route.params.id);
-						}
-						fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs"));
+						//ensure the proper path exists, and copy the file to it
+						fs.createPath(__dirname+"/builds/"+req.route.params.id, fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs")));
 					}
 				});
 				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
