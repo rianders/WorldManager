@@ -285,7 +285,7 @@ app.get('/editworld/:id', function(req, res, next){
 	{
 		var query = { 
 			"id" : req.route.params.id,
-			"user" " req.user.identifier
+			"user" : req.user.identifier
 		};
 		db.collection('worlds').find(query, function(err, docs) {
 			req.hbs.preview = docs[0];
