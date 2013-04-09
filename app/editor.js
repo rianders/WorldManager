@@ -1,6 +1,8 @@
 var fs = require('fs'),
 config = require('./config'),
-$ = require('mongous').Mongous;
+mongojs = require('mongojs'),
+db = mongojs(config.db, ['users', 'worlds']);
+ 
 
 module.exports = function(req, res, next) {
 	var parsedUrl = req.url.split("/");
@@ -24,8 +26,8 @@ module.exports = function(req, res, next) {
 			{
 				if(req.isAuthenticated())
 				{	
-					$(config.db+".worlds").find({id:parsedUrl[2]}, function(r) {
-						if(req.user.identifier==r.documents[0].user)
+					db.collection('worlds').find({id:parsedUrl[2]}, function(err, docs) {
+						if(req.user.identifier==docs[0].user)
 						{
 							var directory = req.url.substring(0, req.url.lastIndexOf("/"));
 							createPath(__dirname+directory, function(done)
@@ -49,8 +51,8 @@ module.exports = function(req, res, next) {
 			{
 				if(req.isAuthenticated())
 				{	
-					$(config.db+".worlds").find({id:parsedUrl[2]}, function(r) {
-						if(req.user.identifier==r.documents[0].user)
+					db.collection('worlds').find({id:parsedUrl[2]}, function(err, docs) {
+						if(req.user.identifier==docs[0].user)
 						{
 							if(fs.statSync(__dirname+req.url).isDirectory())
 							{
