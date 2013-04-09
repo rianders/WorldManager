@@ -1,6 +1,6 @@
 <div id='opentok'>
 	<div id="myPublisherDiv"></div>
-	<script src='https://swww.tokbox.com/v1.1/js/TB.min.js'></script>
+	<script src='https://swww.tokbox.com/webrtc/v2.0/js/TB.min.js'></script>
 	<script type="text/javascript">
 	// Initialize API key, session, and token...
 	  // Think of a session as a room, and a token as the key to get in to the room
@@ -13,12 +13,14 @@
 	session.addEventListener('sessionConnected', sessionConnectedHandler);
 	session.addEventListener('streamCreated', streamCreatedHandler);
 	session.connect(apiKey, token);
-
 	function sessionConnectedHandler(event) {
 		var publisher = TB.initPublisher(apiKey, 'myPublisherDiv');
 		session.publish(publisher);
+
+		// Subscribe to streams that were in the session when we connected
 		subscribeToStreams(event.streams);
 	}
+
 	function streamCreatedHandler(event) {
 		// Subscribe to any new streams that are created
 		subscribeToStreams(event.streams);
@@ -34,13 +36,13 @@
 			// Create the div to put the subscriber element in to
 			var div = document.createElement('div');
 			div.setAttribute('id', 'stream' + streams[i].streamId);
-			document.body.appendChild(div);
+			$("#opentok").append(div);
 
 			// Subscribe to the stream
 			session.subscribe(streams[i], div.id);
 		}
+	}
 	</script>
 </div>
 <script type="text/javascript">
-	$("#opentok").hide();
 </script>

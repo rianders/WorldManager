@@ -283,9 +283,10 @@ app.get('/logout', function(req, res , next){
 app.get('/editworld/:id', function(req, res, next){
 	if(req.isAuthenticated())
 	{
-		var query = {};
-		query.id = req.route.params.id;
-		query.user = req.user.identifier;
+		var query = { 
+			"id" : req.route.params.id,
+			"user" " req.user.identifier
+		};
 		db.collection('worlds').find(query, function(err, docs) {
 			req.hbs.preview = docs[0];
 			res.render('root', previews);
@@ -354,9 +355,10 @@ app.post('/edit/:id', function(req, res, next){
 	{
 		return;
 	}
-	var query = {};
-	query.id = req.route.params.id;
-	query.user = req.user.identifier;
+	var query = {
+		"id" : req.route.params.id,
+		user : req.user.identifier
+	};
 	db.collection('worlds').update(query, {$set : req.params});
 });
 //generic handler for static handlebars pages
@@ -369,9 +371,10 @@ app.get('/deleteworld/:id', function(req, res, next){
 		res.send(403);
 		return;
 	}
-	var query = {};
-	query.id = req.route.params.id;
-	query.user = req.user.identifier;
+	var query = {
+		"id" : req.route.params.id,
+		"user" : req.user.identifier
+	};
 	db.collection('worlds').find(query, function(err, docs) {
 		deleteFolderRecursive(__dirname+'/builds/'+docs[0].id);
 		deleteFolderRecursive(__dirname+'/img/'+docs[0].id);
@@ -386,15 +389,16 @@ app.post('/editprofile', function(req, res, next){
 		res.redirect('/login');
 		return;
 	}
-	var query = {};
-	query.identifier = req.user.identifier;
-	query.name= {};
-	query.name.givenName=req.body.givenName;
-	query.name.familyName=req.body.familyName;
-	query.isPublic=req.body.isPublic;
-	query.displayName=req.body.displayName;
-	query.emails=[];
-	query.emails[0]={"value" :req.body.email};
+	var query = {
+		"identifier" : req.user.identifier,
+		"name" : {
+			"givenName" : req.body.givenName,
+			"familyName" : req.body.familyName
+		},
+		"isPublic" : req.body.isPublic,
+		"displayName" : req.body.displayName,
+		"emails" : [{"value" : req.body.email}]
+	};
 	db.collection('worlds').update({"identifier":req.user.identifier}, {$set : query });
 	res.redirect('/myprofile');
 });
