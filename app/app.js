@@ -5,12 +5,13 @@ var express = require('express')
   , request = require('request')  
   , app = express()
   , fs = require('fs')
-  , $ = require("mongous").Mongous
   , passport = require('passport')
   , GoogleStrategy = require('passport-google').Strategy
   , path = require('path')
   , config = require('./config')
   , net = require('net')
+  , mongojs = require('mongojs')
+  , db = mongojs(config.db, ['users', 'worlds'])
   , MongoStore = require('connect-mongo')(express)
   , sessionStore = new MongoStore({db: "Session"})
   , editor = require('./editor')
@@ -33,16 +34,16 @@ passport.use(new GoogleStrategy({
 
 function(identifier, profile, done) {
 	process.nextTick(function () {
-		$(config.db+".users").find({"identifier" : identifier}, function(r) {
-			if(r.documents.length!=0) //if the user is alraedy in the db, just return the user
+		db.collection("users").find({"identifier" : identifier}, function(err, docs) {
+			if(docs.length!=0) //if the user is alraedy in the db, just return the user
 			{
-				profile = r.documents[0];
+				profile = docs[0];
 				return done(null, profile);
 			}
 			else //otherwise create a new user to add to the db and return the new user
 			{
 				profile.identifier = identifier;
-				$(config.db+".users").save(profile);
+				db.collection('users').save(profile);
 				return done(null, profile);
 			}
 		});
@@ -162,8 +163,8 @@ Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
 });
   
 app.get('/', function(req, res) {
-	$(config.db+".worlds").find(function(r){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
-		req.hbs.preview=r.documents;
+	db.collection('worlds').find(function(err, docs){ //grab the info from mongodb about the worlds that we have to render, and then display them on the page
+		req.hbs.preview=docs;
 		req.hbs.path=partialsDir+'/home.hbs';
 		res.render('root', req.hbs);
 	});
@@ -171,10 +172,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/world/:id', function(req,res) {
-	$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-		if(r.documents.length!=0)
+	db.collection('worlds').find({id:req.route.params.id}, function(err, docs) {
+		if(docs.length!=0)
 		{
-			req.hbs.world=r.documents[0];
+			req.hbs.world=docs[0];
 			if(req.isAuthenticated())
 			{
 				if(req.user.identifier==req.hbs.world.user)
@@ -225,7 +226,7 @@ app.post('/', function(req, res, next){
 					if(err) throw err;
 				});
 			});	
-			$(config.db+".worlds").save(newWorld)
+			db.collection('worlds').save(newWorld)
 		}
 		else
 		{
@@ -264,8 +265,8 @@ app.get('/auth/google/return', function(req, res, next){
 app.get('/myworlds', function(req, res, next){
 		if(req.isAuthenticated())
 		{
-			$(config.db+".worlds").find({"user" : req.user.identifier}, function(r) {
-				req.hbs.preview=r.documents;
+			db.collection('worlds').find({"user" : req.user.identifier}, function(err, docs) {
+				req.hbs.preview=docs;
 				res.render('root', req.hbs);
 			});
 		}
@@ -285,8 +286,8 @@ app.get('/editworld/:id', function(req, res, next){
 		var query = {};
 		query.id = req.route.params.id;
 		query.user = req.user.identifier;
-		$(config.db+".worlds").find(query, function(r) {
-			req.hbs.preview = r.documents[0];
+		db.collection('worlds').find(query, function(err, docs) {
+			req.hbs.preview = docs[0];
 			res.render('root', previews);
 		});
 	}
@@ -298,8 +299,8 @@ app.get('/editworld/:id', function(req, res, next){
 app.post('/editpage/:id', function(req,res,next){
 	if(req.isAuthenticated())
 	{
-		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-			if(req.user.identifier==r.documents[0].user)
+		db.collection('worlds').find({id:req.route.params.id}, function(err, docs) {
+			if(req.user.identifier==docs[0].user)
 			{
 				console.log(req.files);
 			}
@@ -317,8 +318,8 @@ app.post('/editpage/:id', function(req,res,next){
 app.get('/editpage/:id', function(req,res, next){
 	if(req.isAuthenticated())
 	{
-		$(config.db+".worlds").find({id:req.route.params.id}, function(r) {
-			if(req.user.identifier=r.documents[0].user)
+		db.collection('worlds').find({id:req.route.params.id}, function(err, docs) {
+			if(req.user.identifier=docs[0].user)
 			{
 				fs.exists(__dirname+"/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
@@ -356,7 +357,7 @@ app.post('/edit/:id', function(req, res, next){
 	var query = {};
 	query.id = req.route.params.id;
 	query.user = req.user.identifier;
-	$(config.db+'.worlds').update(query, {$set : req.params});
+	db.collection('worlds').update(query, {$set : req.params});
 });
 //generic handler for static handlebars pages
 app.get('/:id', function(req, res, next){
@@ -371,11 +372,11 @@ app.get('/deleteworld/:id', function(req, res, next){
 	var query = {};
 	query.id = req.route.params.id;
 	query.user = req.user.identifier;
-	$(config.db+'.worlds').find(query, function(r) {
-		deleteFolderRecursive(__dirname+'/builds/'+r.documents[0].id);
-		deleteFolderRecursive(__dirname+'/img/'+r.documents[0].id);
+	db.collection('worlds').find(query, function(err, docs) {
+		deleteFolderRecursive(__dirname+'/builds/'+docs[0].id);
+		deleteFolderRecursive(__dirname+'/img/'+docs[0].id);
 	});
-	$(config.db+'.worlds').remove(query);
+	db.collection('worlds').remove(query);
 	res.redirect('/myworlds');
 });
 
@@ -394,7 +395,7 @@ app.post('/editprofile', function(req, res, next){
 	query.displayName=req.body.displayName;
 	query.emails=[];
 	query.emails[0]={"value" :req.body.email};
-	$(config.db+'.users').update({"identifier":req.user.identifier}, {$set : query });
+	db.collection('worlds').update({"identifier":req.user.identifier}, {$set : query });
 	res.redirect('/myprofile');
 });
 var port = config.port;
