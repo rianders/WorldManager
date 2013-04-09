@@ -17,3 +17,7 @@
 <div id="unityPlayer" style="width: 600px; height: 450px; visibility: visible;">
 	<embed width="600" height="450" type="application/vnd.unity" style="display: block; width: 100%; height: 100%;" tabindex="0" firstframecallback="unityObject.firstFrameCallback();" src={{world.world}}>
 </div>
+{{#each plugin}}
+	{{plugin}}
+	{{#embed plugin}}{{/embed}}
+{{/each}}
