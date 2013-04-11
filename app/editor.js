@@ -62,8 +62,10 @@ module.exports = function(req, res, next) {
 							{
 								fs.unlink(__dirname+req.url, function(err)
 								{
-									if(err) throw err;
-									res.send({status: 'ok'});
+									if(err)
+										 res.send(err);
+									else
+										res.send({status: 'ok'});
 								});
 							}
 						}

@@ -1,13 +1,13 @@
 <div id='opentok'>
 	<div id="myPublisherDiv"></div>
-	<script src='https://swww.tokbox.com/webrtc/v2.0/js/TB.min.js'></script>
+	<script src='https://swww.tokbox.com/v1.1/js/TB.min.js'></script>
 	<script type="text/javascript">
 	// Initialize API key, session, and token...
 	  // Think of a session as a room, and a token as the key to get in to the room
 	  // Sessions and tokens are generated on your server and passed down to the client
 	  var apiKey = "24960472";
-	  var sessionId = "1_MX4yNDk2MDQ3Mn4xMjcuMC4wLjF-VHVlIEFwciAwOSAwNzozMDo1MSBQRFQgMjAxM34wLjAzMzg0NTEyN34";
-	  var token = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1lYjdlMzVmOWUwMDhkOTM5MjY4OThlNTUyNjM0NWYzZjU5YmI4YzNiOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9JmNyZWF0ZV90aW1lPTEzNjU1MTc4NTEmbm9uY2U9MC44MTE0MDAwMzEwNjU4OTImZXhwaXJlX3RpbWU9MTM2NTYwNDI1MCZjb25uZWN0aW9uX2RhdGE9";
+	  var sessionId = "2_MX4yNDk2MDQ3Mn4xMjcuMC4wLjF-VGh1IEFwciAxMSAwODowNDo0MSBQRFQgMjAxM34wLjQ1MzQ5OTU2fg";
+	  var token = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1kMThhMDk0ODk2ZDc5YjlkYTFhZGJmYWI2ZWZjZjk1YTc1ZDFiNzFkOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjR4TWpjdU1DNHdMakYtVkdoMUlFRndjaUF4TVNBd09Eb3dORG8wTVNCUVJGUWdNakF4TTM0d0xqUTFNelE1T1RVMmZnJmNyZWF0ZV90aW1lPTEzNjU2OTI3Mjgmbm9uY2U9MC45NTgyNzc1MjE0NTMwNTAyJmV4cGlyZV90aW1lPTEzNjU3NzkxMjgmY29ubmVjdGlvbl9kYXRhPQ=="
 	// Initialize session, set up event listeners, and connect
 	var session = TB.initSession(sessionId);
 	session.addEventListener('sessionConnected', sessionConnectedHandler);
@@ -32,17 +32,17 @@
 			if (streams[i].connection.connectionId == session.connection.connectionId) {
 			  return;
 			}
-
+			
 			// Create the div to put the subscriber element in to
 			var div = document.createElement('div');
 			div.setAttribute('id', 'stream' + streams[i].streamId);
-			$("#opentok").append(div);
+			$("#opentokstreams").append(div);
 
 			// Subscribe to the stream
 			session.subscribe(streams[i], div.id);
 		}
 	}
 	</script>
+	<div id="opentokstreams" style="display : none;">
+	</div>
 </div>
-<script type="text/javascript">
-</script>

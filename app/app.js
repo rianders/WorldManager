@@ -15,7 +15,9 @@ var express = require('express')
   , MongoStore = require('connect-mongo')(express)
   , sessionStore = new MongoStore({db: "Session"})
   , editor = require('./editor')
-  , defaultHandlebars = require('./defaultHandlebars');
+  , defaultHandlebars = require('./defaultHandlebars')
+  , OpenTok = require('opentok')
+  , opentok = new OpenTok.OpenTokSDK(config.opentokapi, config.opentoksecret);
 
 
 var secret = 'keyboard cat';
@@ -209,6 +211,7 @@ app.get('/world/:id', function(req,res) {
 			{
 				req.hbs.path=__dirname+"/builds/"+req.route.params.id+"/world.hbs";	
 			}
+			console.log(req.hbs);
 			req.hbs.identifier = req.route.params.id;
 			res.render('root',req.hbs);
 		}
@@ -219,6 +222,7 @@ app.get('/world/:id', function(req,res) {
 		}
 	});
 });
+
 app.post('/', function(req, res, next){
 	if(req.isAuthenticated())
 	{	
@@ -340,14 +344,14 @@ app.get('/editpage/:id', function(req,res, next){
 	if(req.isAuthenticated())
 	{
 		db.collection('worlds').find({id:req.route.params.id}, function(err, docs) {
-			if(req.user.identifier=docs[0].user)
+			if(docs[0].user && req.user.identifier==docs[0].user)
 			{
 				fs.exists(__dirname+"/builds/"+req.route.params.id+"/world.hbs", function(exists)
 				{
 					if(!exists)
 					{
 						//ensure the proper path exists, and copy the file to it
-						fs.createPath(__dirname+"/builds/"+req.route.params.id, fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs")));
+						createPath(__dirname+"/builds/"+req.route.params.id, fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs")));
 					}
 				});
 				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
