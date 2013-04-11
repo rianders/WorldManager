@@ -1,5 +1,4 @@
 <div id='opentok'>
-	<div id="myPublisherDiv"></div>
 	<script src='https://swww.tokbox.com/v1.1/js/TB.min.js'></script>
 	<script type="text/javascript">
 	// Initialize API key, session, and token...
@@ -10,22 +9,53 @@
 	  var token = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1kMThhMDk0ODk2ZDc5YjlkYTFhZGJmYWI2ZWZjZjk1YTc1ZDFiNzFkOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjR4TWpjdU1DNHdMakYtVkdoMUlFRndjaUF4TVNBd09Eb3dORG8wTVNCUVJGUWdNakF4TTM0d0xqUTFNelE1T1RVMmZnJmNyZWF0ZV90aW1lPTEzNjU2OTI3Mjgmbm9uY2U9MC45NTgyNzc1MjE0NTMwNTAyJmV4cGlyZV90aW1lPTEzNjU3NzkxMjgmY29ubmVjdGlvbl9kYXRhPQ=="
 	// Initialize session, set up event listeners, and connect
 	var session = TB.initSession(sessionId);
+	var deviceManager;
+	var devicePanel;
+	var publisher;
 	session.addEventListener('sessionConnected', sessionConnectedHandler);
 	session.addEventListener('streamCreated', streamCreatedHandler);
 	session.connect(apiKey, token);
 	function sessionConnectedHandler(event) {
-		var publisher = TB.initPublisher(apiKey, 'myPublisherDiv');
+		publisher = TB.initPublisher(apiKey, 'myPublisherDiv');
 		session.publish(publisher);
-
+		addDeviceManager();
 		// Subscribe to streams that were in the session when we connected
 		subscribeToStreams(event.streams);
 	}
-
+	function addDeviceManager() {
+		deviceManager = TB.initDeviceManager(apiKey);
+		deviceManager.addEventListener("devicesDetected", devicesDetectedHandler);
+		deviceManager.detectDevices();
+		displayPanel();
+	}
+	function displayPanel() {
+		var newDiv = document.createElement("div");
+		newDiv.id = "devicePanel";
+		document.getElementById("devicePanelContainer").appendChild(newDiv);
+		devicePanel = deviceManager.displayPanel("devicePanel", publisher);
+		devicePanel.addEventListener("devicesSelected", devicesSelectedHandler);
+	}
+	function devicesDetectedHandler(event) {
+		reportDevices(event.selectedCamera, event.selectedMicrophone);
+	}
 	function streamCreatedHandler(event) {
 		// Subscribe to any new streams that are created
 		subscribeToStreams(event.streams);
 	}
 
+	function devicesSelectedHandler(event) {
+	    reportDevices(event.camera, event.microphone);
+	}
+
+	function reportDevices(camera, mic) {
+	    document.getElementById("cameraNameDiv").innerHTML = "Camera: " + camera.name;
+	    document.getElementById("micNameDiv").innerHTML = "Microphone: " + mic.name;
+	}
+
+	function closePanel() {
+	    deviceManager.removePanel(devicePanel);
+	    document.getElementById("closeButton").style.visibility = "hidden";
+	}
 	function subscribeToStreams(streams) {
 		for (var i = 0; i < streams.length; i++) {
 			// Make sure we don't subscribe to ourself
@@ -43,6 +73,9 @@
 		}
 	}
 	</script>
+	<div id="devicePanelContainer">
+	</div>
 	<div id="opentokstreams" style="display : none;">
+		<div id="myPublisherDiv" style="display : none;"></div>
 	</div>
 </div>
