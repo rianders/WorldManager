@@ -6,7 +6,7 @@ var express = require('express')
   , app = express()
   , fs = require('fs')
   , passport = require('passport')
-  , GoogleStrategy = require('passport-google').Strategy
+  , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
   , path = require('path')
   , config = require('./config')
   , net = require('net')
@@ -19,7 +19,6 @@ var express = require('express')
   , OpenTok = require('opentok')
   , opentok = new OpenTok.OpenTokSDK(config.opentokapi, config.opentoksecret);
 
-
 var secret = 'keyboard cat';
 passport.serializeUser(function(user, done) {
 	done(null, user);
@@ -30,13 +29,15 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new GoogleStrategy({
-	returnURL:config.url+':'+config.port+'/auth/google/return',
-	realm: config.url+':'+config.port
+	clientID: config.googleClientID,
+	clientSecret: config.googleClientSecret,
+	callbackURL:config.url+':'+config.port+'/oauth2callback',
 },
 
-function(identifier, profile, done) {
+function(accessToken, refreshToken, profile, done) {
 	process.nextTick(function () {
-		db.collection("users").find({"identifier" : identifier}, function(err, docs) {
+		console.log(profile);
+		db.collection("users").find({"id" : profile.id}, function(err, docs) {
 			if(docs.length!=0) //if the user is alraedy in the db, just return the user
 			{
 				profile = docs[0];
@@ -44,7 +45,6 @@ function(identifier, profile, done) {
 			}
 			else //otherwise create a new user to add to the db and return the new user
 			{
-				profile.identifier = identifier;
 				db.collection('users').save(profile);
 				return done(null, profile);
 			}
@@ -263,9 +263,10 @@ app.post('/', function(req, res, next){
 	}
 });
 
-app.get('/auth/google', passport.authenticate('google', { failureRedirect: '/login' }));
+app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/userinfo.profile',
+                                            'https://www.googleapis.com/auth/userinfo.email'] }));
 
-app.get('/auth/google/return', function(req, res, next){
+app.get('/oauth2callback', function(req, res, next){
   passport.authenticate('google', function(err, user, info){
     // This is the default destination upon successful login.
     var redirectUrl = '/';
