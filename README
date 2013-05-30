@@ -1,8 +1,8 @@
 World Manager is an Open Source world management tool for Unity3D virtual spaces.
 
 It consists of a proxy for handling requests from the Unity3D www class, 
-and a management tool where instructers, and admins can select componets of a 
-virtual space, and have theat built to order.
+several built in libraries designed to talk to Unity through Application.ExternalCall() (such an an OpenTok library),
+and a management tool where instructors and admins can select components of a virtual space to quickly generate a new space.
 
 This tool is dependent on mongoDB(http://www.mongodb.org/downloads) and nodejs (http://nodejs.org/).
 Usage:
