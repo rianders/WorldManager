@@ -313,7 +313,7 @@ app.get('/editworld/:id', function(req, res, next){
 		};
 		db.collection('worlds').find(query, function(err, docs) {
 			req.hbs.preview = docs[0];
-			res.render('root', previews);
+			res.render('root', req.hbs);
 		});
 	}
 	else
@@ -351,7 +351,7 @@ app.get('/editpage/:id', function(req,res, next){
 					if(!exists)
 					{
 						//ensure the proper path exists, and copy the file to it
-						createPath(__dirname+"/builds/"+req.route.params.id, fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs")));
+						createPath(__dirname+"/builds/"+req.route.params.id, function() {fs.createReadStream(partialsDir+"/world.hbs").pipe(fs.createWriteStream(__dirname+"/builds/"+req.route.params.id+"/world.hbs"))});
 					}
 				});
 				req.hbs.pathToPartial=config.url+":"+config.port+"/builds/"+req.route.params.id+"/world.hbs";
