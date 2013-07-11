@@ -1,26 +1,44 @@
 <div id='opentok'>
-	<script src='https://swww.tokbox.com/v1.1/js/TB.min.js'></script>
+	<script src="http://rugrid.rutgers.edu:3004/socket.io/socket.io.js"></script>
+	<script src='https://www.tokbox.com/v1.1/js/TB.min.js'></script>
 	<script type="text/javascript">
 	// Initialize API key, session, and token...
 	  // Think of a session as a room, and a token as the key to get in to the room
 	  // Sessions and tokens are generated on your server and passed down to the client
 	  var apiKey = "24960472";
-	  var sessionId = "2_MX4yNDk2MDQ3Mn4xMjcuMC4wLjF-VGh1IEFwciAxMSAwODowNDo0MSBQRFQgMjAxM34wLjQ1MzQ5OTU2fg";
-	  var token = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1kMThhMDk0ODk2ZDc5YjlkYTFhZGJmYWI2ZWZjZjk1YTc1ZDFiNzFkOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjR4TWpjdU1DNHdMakYtVkdoMUlFRndjaUF4TVNBd09Eb3dORG8wTVNCUVJGUWdNakF4TTM0d0xqUTFNelE1T1RVMmZnJmNyZWF0ZV90aW1lPTEzNjU2OTI3Mjgmbm9uY2U9MC45NTgyNzc1MjE0NTMwNTAyJmV4cGlyZV90aW1lPTEzNjU3NzkxMjgmY29ubmVjdGlvbl9kYXRhPQ=="
+	  var managementSessionId = "{{world.opentokSessions.management}}";
+	  var unionSessionId = "{{world.opentokSessions.union}}";
+	  var middleSessionId = "{{world.opentokSessions.middle}}";
+	  var managementToken;
+	  var unionToken;
+	  var middleToken;
 	// Initialize session, set up event listeners, and connect
-	var session = TB.initSession(sessionId);
+	var unionSession = TB.initSession(unionSessionId);
+	var managementSession = TB.initSession(managementSessionId);
+	var middleSession = TB.initSession(middleSessionId);
+	var currentSession;
 	var deviceManager;
 	var devicePanel;
-	var publisher;
-	session.addEventListener('sessionConnected', sessionConnectedHandler);
-	session.addEventListener('streamCreated', streamCreatedHandler);
-	session.connect(apiKey, token);
+	var publisherProperties = new Object();
+	publisherProperties.publishVideo = false;
+	var publisher = TB.initPublisher(apiKey, 'myPublisherDiv', publisherProperties);
+	var currentRoom = "middle";
+	var isMicOn = true;
+	var sessionToJoinOnStart;
+	managementSession.addEventListener('streamCreated', streamCreatedHandler);
+	unionSession.addEventListener('streamCreated', streamCreatedHandler);
+	managementSession.addEventListener('streamCreated', streamCreatedHandler);
+	unionSession.addEventListener('sessionConnected', sessionConnectedHandler);
+	managementSession.addEventListener('sessionConnected', sessionConnectedHandler);
+	middleSession.addEventListener('sessionConnected', sessionConnectedHandler);
+	console.log("Connecting to opentok");
 	function sessionConnectedHandler(event) {
-		publisher = TB.initPublisher(apiKey, 'myPublisherDiv');
-		session.publish(publisher);
+		console.log("Session connected");
+		currentSession = event.target;
+		event.target.publish(publisher);
+		subscribeToStreams(event.streams);
 		addDeviceManager();
 		// Subscribe to streams that were in the session when we connected
-		subscribeToStreams(event.streams);
 	}
 	function addDeviceManager() {
 		deviceManager = TB.initDeviceManager(apiKey);
@@ -42,14 +60,29 @@
 		// Subscribe to any new streams that are created
 		subscribeToStreams(event.streams);
 	}
+	function streamDestroyedHandler(event) {
+		for (var i = 0; i < event.streams.length; i++) {
+			var stream = event.streams[i];
+			unsubscribe(stream);
+		}
+	}
+	function unsubscribe(stream)
+	{
+		var subscribers = session.getSubscribersForStream(stream);
+		for (var i=0; i < subscribers.length; i++)
+		{
+		}
+	}
 
 	function devicesSelectedHandler(event) {
 	    reportDevices(event.camera, event.microphone);
 	}
 
 	function reportDevices(camera, mic) {
-	    document.getElementById("cameraNameDiv").innerHTML = "Camera: " + camera.name;
-	    document.getElementById("micNameDiv").innerHTML = "Microphone: " + mic.name;
+		if(mic==null)
+		{
+			console.log("No mic found");
+		}
 	}
 
 	function closePanel() {
@@ -69,13 +102,101 @@
 			$("#opentokstreams").append(div);
 
 			// Subscribe to the stream
-			session.subscribe(streams[i], div.id);
+			subscriber = session.subscribe(streams[i], subscriberDiv.id);
 		}
+	}
+	//everything below here is a function called by unity
+	function initUser(username) {
+	  var socket = io.connect('http://rugrid.rutgers.edu:3004');
+	  socket.on('connect', function () {
+	  	socket.emit('generateToken', {"session": managementSessionId, "name" : username}, function (token) {
+			managementToken = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1jMmUzNTk2YTgxODY2YjlhNzkzZGY3ODc5YTdjODVmYmY5NGZiNDY2OnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjUtVkdoMUlFcDFiQ0F4TVNBeE1UbzBOem8xTVNCUVJGUWdNakF4TTM0d0xqazJNVGszTlRjMWZnJmNyZWF0ZV90aW1lPTEzNzM1NzM3MDUmbm9uY2U9MC41MjcwMzE4MjkxNjMzNjImZXhwaXJlX3RpbWU9MTM3MzY2MDEwNSZjb25uZWN0aW9uX2RhdGE9Unlhbg==";
+			if(sessionToJoinOnStart == managementSession)
+			{
+				managementSession.connect(apiKey, managementToken);
+			}
+		});
+	  	socket.emit('generateToken', {"session": unionSessionId, "name" : username}, function (token) {
+			unionToken = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1iZWFjMTc1NzQzYWU2YWIwNzNkMjA0ZDIzMzhiY2YxM2FmOTJhMDBjOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjUtVkdoMUlFcDFiQ0F4TVNBeE1UbzBOem8xTVNCUVJGUWdNakF4TTM0d0xqYzBPVFUxTnpsLSZjcmVhdGVfdGltZT0xMzczNTczOTkyJm5vbmNlPTAuNjgzMjg3MzI2MTAxMTczNiZleHBpcmVfdGltZT0xMzczNjYwMzkyJmNvbm5lY3Rpb25fZGF0YT1SeWFu";
+			if(sessionToJoinOnStart == unionSession)
+			{
+				unionSession.connect(apiKey, unionToken);
+			}
+		});
+	  	socket.emit('generateToken', {"session": middleSessionId, "name" : username}, function (token) {
+			middleToken = "T1==cGFydG5lcl9pZD0yNDk2MDQ3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz0xMGI2Y2Y0OWE0NzU4OGJjNDdkYTYzMzQ1ZTAzOTlmN2I2NTc1M2ZjOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR5TkRrMk1EUTNNbjUtVkdoMUlFcDFiQ0F4TVNBeE1UbzBOem8xTVNCUVJGUWdNakF4TTM0d0xqazJNVGszTlRjMWZnJmNyZWF0ZV90aW1lPTEzNzM1NzQwMjUmbm9uY2U9MC40NTkyMDQ4OTc4MDUzMTc2JmV4cGlyZV90aW1lPTEzNzM2NjA0MjUmY29ubmVjdGlvbl9kYXRhPVJ5YW4=";
+			if(sessionToJoinOnStart == middleSession)
+			{
+				middleSession.connect(apiKey, middletoken);
+			}
+		});
+	  });
+	}
+	function RoomChange(newroom) {
+		if(newroom=="middle" && currentSession!=middleSession)
+		{
+			if(currentSession!=null)
+			{
+				currentSession.disconnect();
+			}
+			if(middleToken!=null)
+			{
+				middleSession.connect(apiKey, middleToken);
+			}
+			else
+			{
+				sessionToJoinOnStart == middleSession;
+			}
+		}
+		else if(newroom=="management" && currentSession!=managementSession)
+		{
+			if(currentSession!=null)
+			{
+				currentSession.disconnect();
+			}
+			if(managementToken!=null)
+			{
+				managementSession.connect(apiKey, managementToken);
+			}
+			else
+			{
+				sessionToJoinOnStart = managementSession;
+			}
+		}
+		else if(newroom=="union" && currentSession!=unionSession)
+		{
+			if(currentSession!=null)
+			{
+				currentSession.disconnect();
+			}
+			if(unionToken!=null)
+			{
+				unionSession.connect(apiKey, unionToken);
+			}
+			else
+			{
+				sessionToJoinOnStart = unionSession;
+			}
+		}
+	}
+	function MicMute(isMuted) {
+		if(isMuted == "True")
+		{
+			publisher.publishAudio(false);
+		}
+		else
+		{
+			publisher.publishAudio(true);
+		}
+	}
+	function SetVolume(newVolume) {
+		//newVolume is either 0-2 while we can set the volume to 0-100
+		subscriber.setAudioVolume(newVolume*50);
 	}
 	</script>
 	<div id="devicePanelContainer">
 	</div>
-	<div id="opentokstreams" style="display : none;">
-		<div id="myPublisherDiv" style="display : none;"></div>
+	<div id="opentokstreams">
+		<div id="myPublisherDiv"></div>
 	</div>
 </div>

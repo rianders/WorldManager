@@ -17,9 +17,8 @@ var express = require('express')
   , editor = require('./editor')
   , defaultHandlebars = require('./defaultHandlebars')
   , OpenTok = require('opentok')
-  , opentok = new OpenTok.OpenTokSDK(config.opentokapi, config.opentoksecret);
-
-
+  , opentok = new OpenTok.OpenTokSDK(config.opentokapi, config.opentoksecret)
+  , io = require('socket.io').listen(config.port+1);
 var secret = 'keyboard cat';
 passport.serializeUser(function(user, done) {
 	done(null, user);
@@ -250,7 +249,17 @@ app.post('/', function(req, res, next){
 					});
 				});	
 			});
-			db.collection('worlds').save(newWorld)
+			newWorld.opentokSessions = {};
+			opentok.createSession('127.0.0.1', function(result) {
+				newWorld.opentokSessions.management = result;
+				opentok.createSession('127.0.0.1', function(result) {
+					newWorld.opentokSessions.union = result;
+					opentok.createSession('127.0.0.1', function(result) {
+						newWorld.opentokSessions.middle = result;
+						db.collection('worlds').save(newWorld);
+					});
+				});
+			});
 		}
 		else
 		{
@@ -424,3 +433,9 @@ app.post('/editprofile', function(req, res, next){
 var port = config.port;
 console.log("WorldManager now listening on port:" + port);
 app.listen(port);
+
+io.sockets.on('connection', function (socket) {
+	socket.on('generateToken', function (data, fn) {
+		fn(opentok.generateToken({session_id:data.session, connection_data:data.name}));
+	});
+});
