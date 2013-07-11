@@ -22,7 +22,9 @@
 		"net" : "*",
 		"mongojs" : "*",
 		"opentok" : "*",
-		"connect-mongo" : "*"
+		"connect-mongo" : "*",
+		"bower" : "*",
+		"socket.io" : "*"
 	},
 	"analyze" : false,
 	"devDependencies" : [
