@@ -431,11 +431,25 @@ app.post('/editprofile', function(req, res, next){
 	res.redirect('/myprofile');
 });
 var port = config.port;
+var tokens = {};
+var sessions = {};
 console.log("WorldManager now listening on port:" + port);
 app.listen(port);
 
 io.sockets.on('connection', function (socket) {
 	socket.on('generateToken', function (data, fn) {
-		fn(opentok.generateToken({session_id:data.session, connection_data:data.name}));
+		//43200000 is 12 hours in milliseconds i.e. the time for a token to expire in milliseconds
+		if(tokens[data.session] != null && (tokens[data.session].timestamp-new Date().getTime())<43200000)
+		{
+			fn(tokens[data.session]);
+		}
+		else
+		{
+			tokens[data.session] = {};
+			tokens[data.session].session = opentok.generateToken({session_id:data.session});
+			tokens[data.session].timestamp = new Date().getTime();
+			fn(tokens[data.session]);
+		}
+		console.log("Sent token: " + tokens[data.session]);
 	});
 });
