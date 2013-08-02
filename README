@@ -16,20 +16,23 @@ http://nodejs.org/download/
 Then you need to get npm installed
 https://npmjs.org/doc/install.html
 
-Now you can run node
-Example:
-have expressExample.js somewhere on your computer you know how to navigate to it
-in the command prompt navigate to its folder
-type "node expressExample.js"
 
-Now in a browser go to localhost:3000
-It will display Hello World
+to use this app you must install the following through using npm if they aren't installed already:
+npm install connect-mongo 
+npm install express		
+npm install mongojs		
+npm install opentok		
+npm install passport-google	
+npm install request		
+npm install util
+npm install consolidate	
+npm install handlebars	
+npm install net		
+npm install passport	
+npm install path		
+npm install socket.io
+
+You also need to install MongoDB from http://mongodb.com
 
 
-to use this app you must install the following through using npm if they aren't installed already
- npm install express
- npm install request
- npm install handlebars
- npm install mongoose
- npm install fs
- npm install mongous
+
