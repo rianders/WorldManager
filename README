@@ -4,11 +4,13 @@ It consists of a proxy for handling requests from the Unity3D www class,
 several built in libraries designed to talk to Unity through Application.ExternalCall() (such an an OpenTok library),
 and a management tool where instructors and admins can select components of a virtual space to quickly generate a new space.
 
-This tool is dependent on mongoDB(http://www.mongodb.org/downloads) and nodejs (http://nodejs.org/).
-Usage:
+This tool is dependent on: 
+* mongoDB(http://www.mongodb.org/downloads)  
+* nodejs (http://nodejs.org/)
 
-npm install
-node app.js
+Installation guides for MongoDB:
+http://docs.mongodb.org/manual/installation/
+
 
 In order to get started with Node you will need to download node.
 http://nodejs.org/download/
@@ -17,7 +19,7 @@ Then you need to get npm installed
 https://npmjs.org/doc/install.html
 
 
-to use this app you must install the following through using npm if they aren't installed already:
+In case the basic "npm install" missed something you can install the following:
 npm install connect-mongo 
 npm install express		
 npm install mongojs		
@@ -32,7 +34,13 @@ npm install passport
 npm install path		
 npm install socket.io
 
-You also need to install MongoDB from http://mongodb.com
+
+Usage:
+cd app
+npm install
+node app.js
+
+
 
 
 
