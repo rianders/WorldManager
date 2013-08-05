@@ -1,7 +1,46 @@
 World Manager is an Open Source world management tool for Unity3D virtual spaces.
 
 It consists of a proxy for handling requests from the Unity3D www class, 
-and a management tool where instructers, and admins can select componets of a 
-virtual space, and have theat built to order.
+several built in libraries designed to talk to Unity through Application.ExternalCall() (such an an OpenTok library),
+and a management tool where instructors and admins can select components of a virtual space to quickly generate a new space.
+
+This tool is dependent on: 
+* mongoDB(http://www.mongodb.org/downloads)  
+* nodejs (http://nodejs.org/)
+
+Installation guides for MongoDB:
+http://docs.mongodb.org/manual/installation/
+
+
+In order to get started with Node you will need to download node.
+http://nodejs.org/download/
+
+Then you need to get npm installed
+https://npmjs.org/doc/install.html
+
+
+In case the basic "npm install" missed something you can install the following:
+npm install connect-mongo 
+npm install express		
+npm install mongojs		
+npm install opentok		
+npm install passport-google	
+npm install request		
+npm install util
+npm install consolidate	
+npm install handlebars	
+npm install net		
+npm install passport	
+npm install path		
+npm install socket.io
+
+
+Usage:
+cd app
+npm install
+node app.js
+
+
+
 
 

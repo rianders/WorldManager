@@ -1,0 +1,8 @@
+<h4>Note: Unaltered fields will not be changed</h4>
+<form action="/edit/{{preview.id}}" method="post" enctype="multipart/form-data">
+	<p>Name : <br> <input type=text name=name placeholder={{preview.name}}></input></p>
+	<p>Info : <br> <textarea rows="4" <input type=textarea name=info placeholder={{preview.info}}></textarea></p>
+	<p>Build : <br> <input type=file name=build></input></p>
+	<p>Preview : <br> <input type=file name=image>{{preview.image}}</input></p>
+	<p><input type="Submit" name="Submit" value="Update"></p>
+</form>

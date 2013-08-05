@@ -1,0 +1,7 @@
+{{#each files}}
+{{#if this.isDirectory}}
+	<li>{{this.name}}<ul id="{{this.path}}" onClick=getDir(this,'{{this.path}}')>></ul></li>
+{{else}}
+	<li id="{{this.path}}"onClick=setEditor('{{this.path}}')>{{this.name}}</li>
+{{/if}}
+{{/each}}
