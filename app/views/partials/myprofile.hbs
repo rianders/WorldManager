@@ -1,0 +1,26 @@
+{{#if isAuthenticated}}
+<header>
+	<h1>{{user.displayName}}'s Profile</h1>
+</header>
+
+<body>
+	<a class="btn btn-link btn-large" href="/myworlds">My Worlds</a>
+	<a class="btn btn-link btn-large" href="/editprofile">Edit Profile</a>
+	<br><br>
+	First Name: {{user.name.givenName}}
+	<br>
+	Last Name: {{user.name.familyName}}
+	<br>
+	{{#each user.emails}}
+	E-Mail: {{this.value}}
+	<br>
+	{{/each}}
+	Profile Picture: 
+	<br>
+	Website:
+	<br><br><br><br>
+	<a class="btn btn-link btn-mini" href="/deleteprofile">Delete Profile</a>
+</body>
+{{else}}
+{{> login}}
+{{/if}}

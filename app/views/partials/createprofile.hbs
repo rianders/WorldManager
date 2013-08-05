@@ -1,0 +1,19 @@
+<form enctype="multipart/formdata" method="post" action="/createprofile/{{user.identifier}}">
+  <fieldset>
+    <legend>Create Profile</legend>
+    <label>First Name</label>
+    <input type="text" placeholder="First Name">
+	<label>Last Name</label>
+    <input type="text" placeholder="Last Name">
+	<label>E-mail</label>
+    <input type="text" placeholder="E-mail">
+	<label>Website</label>
+    <input type="text" placeholder="Website">
+ 	<label>Profile Picture:</label>
+    <input type="file" name="image">
+    <label class="checkbox">
+      <input type="checkbox"> Do you want to allow people to view your profile?
+    </label>
+    <button type="submit" class="btn">Create Profile</button>
+  </fieldset>
+</form>
